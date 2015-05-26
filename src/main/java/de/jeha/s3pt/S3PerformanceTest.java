@@ -29,6 +29,14 @@ public class S3PerformanceTest implements Runnable {
     private final int n;
     private final int size;
 
+    /**
+     * @param accessKey   access key
+     * @param secretKey   secret key
+     * @param endpointUrl endpoint url
+     * @param bucketName  bucket name
+     * @param n           number of operations
+     * @param size        size for upload operations
+     */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName, int n, int size) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
