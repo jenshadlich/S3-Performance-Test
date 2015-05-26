@@ -1,9 +1,12 @@
 package de.jeha.s3pt.cli;
 
 import de.jeha.s3pt.S3PerformanceTest;
+import org.apache.commons.lang3.time.StopWatch;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -12,6 +15,8 @@ import java.util.Locale;
  * @author jenshadlich@googlemail.com
  */
 public class Main {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     @Option(name = "-t", usage = "number of threads", hidden = true)
     private int threads = 1;
@@ -56,9 +61,13 @@ public class Main {
             return;
         }
 
-        new S3PerformanceTest(accessKey, secretKey, endpointUrl, bucketName, n, size).run();
+        StopWatch stopWatch = new StopWatch();
 
-        System.out.println("");
+        stopWatch.start();
+        new S3PerformanceTest(accessKey, secretKey, endpointUrl, bucketName, n, size).run();
+        stopWatch.stop();
+
+        LOG.info("Total time = {} ms", stopWatch.getTime());
     }
 
 }

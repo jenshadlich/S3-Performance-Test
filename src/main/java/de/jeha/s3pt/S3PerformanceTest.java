@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +63,13 @@ public class S3PerformanceTest implements Runnable {
             PutObjectRequest putObjectRequest =
                     new PutObjectRequest(bucketName, key, new ByteArrayInputStream(data), objectMetadata);
 
+            StopWatch stopWatch = new StopWatch();
+
+            stopWatch.start();
             s3.putObject(putObjectRequest);
+            stopWatch.stop();
+
+            LOG.info("Time = {} ms", stopWatch.getTime());
         }
 
         LOG.info("Done");
