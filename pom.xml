@@ -8,7 +8,7 @@
     <name>S3 Performance Test</name>
     <packaging>jar</packaging>
     <version>0.1-SNAPSHOT</version>
-    <description>Tool to test the read / write performance of AWS S3 or S3-compatible object storage systems</description>
+    <description>A tool to test the performance of Amazon S3 or S3-compatible object storage like Ceph with radosgw</description>
 
     <developers>
         <developer>
