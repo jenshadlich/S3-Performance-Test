@@ -27,7 +27,7 @@
         <junit.version>4.12</junit.version>
         <logback.version>1.1.2</logback.version>
         <args4j.version>2.32</args4j.version>
-        <commons-io.version>2.4</commons-io.version>
+        <commons-lang3.version>3.4</commons-lang3.version>
         <aws-java-sdk.version>1.9.36</aws-java-sdk.version>
         <!-- plugin versions -->
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
@@ -48,9 +48,9 @@
             <version>${args4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
