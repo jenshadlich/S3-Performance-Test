@@ -14,17 +14,26 @@ import java.util.Locale;
  */
 public class Main {
 
-    @Option(name = "-t", usage = "number of threads")
-    private Integer threads = 1;
+    @Option(name = "-t", usage = "number of threads", hidden = true)
+    private int threads = 1;
 
-    @Option(name = "-n", usage = "number of request", required = true)
+    @Option(name = "-n", usage = "number of requests", required = true)
     private int n;
 
-    @Option(name = "-s", usage = "number of files", required = true)
-    private int size = 128 * 1024;
+    @Option(name = "--size", usage = "number of files")
+    private int size = 128 * 1024; // 128 kb
 
-    @Argument(required = true)
-    private String url;
+    @Option(name = "--accessKey", usage = "access key ID", required = true)
+    private String accessKey;
+
+    @Option(name = "--secretKey", usage = "secret access key", required = true)
+    private String secretKey;
+
+    @Option(name = "--endpointUrl", usage = "endpoint url")
+    private String endpointUrl = "s3.amazonaws.com";
+
+    @Option(name = "--bucketName", usage = "name of bucket")
+    private String bucketName;
 
     public static void main(String... args) throws IOException {
         Locale.setDefault(Locale.ENGLISH);
@@ -37,15 +46,18 @@ public class Main {
 
         try {
             parser.parseArgument(args);
+
         } catch (CmdLineException e) {
+
             System.err.println(e.getMessage());
-            System.err.println("java -jar s3-pt.jar [options...] <url>");
+            System.err.println("java -jar s3-pt.jar [options...]");
             parser.printUsage(System.err);
             System.err.println();
+
             return;
         }
 
-        new S3PerformanceTest().run();
+        new S3PerformanceTest(accessKey, secretKey, endpointUrl, bucketName, n, size).run();
 
         System.out.println("");
     }
