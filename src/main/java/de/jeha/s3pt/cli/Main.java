@@ -1,6 +1,7 @@
 package de.jeha.s3pt.cli;
 
 import de.jeha.s3pt.S3PerformanceTest;
+import de.jeha.s3pt.TestMode;
 import org.apache.commons.lang3.time.StopWatch;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -21,7 +22,7 @@ public class Main {
     @Option(name = "-t", usage = "number of threads", hidden = true)
     private int threads = 1;
 
-    @Option(name = "-n", usage = "number of requests", required = true)
+    @Option(name = "-n", usage = "number of operations", required = true)
     private int n;
 
     @Option(name = "--size", usage = "number of files")
@@ -38,6 +39,9 @@ public class Main {
 
     @Option(name = "--bucketName", usage = "name of bucket")
     private String bucketName;
+
+    @Option(name = "--testMode", usage = "test mode", hidden = true)
+    private String testMode = TestMode.UPLOAD.name();
 
     public static void main(String... args) throws IOException {
         Locale.setDefault(Locale.ENGLISH);
@@ -64,7 +68,7 @@ public class Main {
         StopWatch stopWatch = new StopWatch();
 
         stopWatch.start();
-        new S3PerformanceTest(accessKey, secretKey, endpointUrl, bucketName, n, size).run();
+        new S3PerformanceTest(accessKey, secretKey, endpointUrl, bucketName, TestMode.valueOf(testMode), n, size).run();
         stopWatch.stop();
 
         LOG.info("Total time = {} ms", stopWatch.getTime());

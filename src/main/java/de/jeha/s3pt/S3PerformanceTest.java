@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ public class S3PerformanceTest implements Runnable {
     private final String secretKey;
     private final String endpointUrl;
     private final String bucketName;
+    private final TestMode testMode;
     private final int n;
     private final int size;
 
@@ -37,23 +39,63 @@ public class S3PerformanceTest implements Runnable {
      * @param n           number of operations
      * @param size        size for upload operations
      */
-    public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName, int n, int size) {
+    public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
+                             TestMode testMode, int n, int size) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
         this.bucketName = bucketName;
+        this.testMode = testMode;
         this.n = n;
         this.size = size;
     }
 
     @Override
     public void run() {
-        LOG.info("Run test: n={}, size={} byte", n, size);
-
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         AmazonS3 s3 = new AmazonS3Client(credentials);
 
         s3.setEndpoint(endpointUrl);
+
+        switch (testMode) {
+            case UPLOAD:
+                upload(s3);
+                break;
+            case CLEAR_BUCKET:
+                clearBucket(s3);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown mode: " + testMode);
+        }
+
+        LOG.info("Done");
+    }
+
+    private void clearBucket(AmazonS3 s3) {
+        LOG.info("Clear bucket: n={}", n);
+
+        int deleted = 0;
+        for (S3ObjectSummary objectSummary : s3.listObjects(bucketName).getObjectSummaries()) {
+            LOG.info("Delete file: {}", objectSummary.getKey());
+
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            s3.deleteObject(bucketName, objectSummary.getKey());
+            stopWatch.stop();
+
+            LOG.info("Time = {} ms", stopWatch.getTime());
+
+            deleted++;
+            if (deleted >= n) {
+                break;
+            }
+        }
+
+        LOG.info("Files deleted: {}", deleted);
+    }
+
+    private void upload(AmazonS3 s3) {
+        LOG.info("Upload: n={}, size={} byte", n, size);
 
         // create some random data
         final byte data[] = new byte[size];
@@ -72,14 +114,11 @@ public class S3PerformanceTest implements Runnable {
                     new PutObjectRequest(bucketName, key, new ByteArrayInputStream(data), objectMetadata);
 
             StopWatch stopWatch = new StopWatch();
-
             stopWatch.start();
             s3.putObject(putObjectRequest);
             stopWatch.stop();
 
             LOG.info("Time = {} ms", stopWatch.getTime());
         }
-
-        LOG.info("Done");
     }
 }
