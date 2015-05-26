@@ -1,7 +1,6 @@
 package de.jeha.s3pt.cli;
 
 import de.jeha.s3pt.S3PerformanceTest;
-import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
