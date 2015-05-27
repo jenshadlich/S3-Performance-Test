@@ -28,6 +28,7 @@
         <logback.version>1.1.2</logback.version>
         <args4j.version>2.32</args4j.version>
         <commons-lang3.version>3.4</commons-lang3.version>
+        <commons-math3.version>3.5</commons-math3.version>
         <aws-java-sdk.version>1.9.36</aws-java-sdk.version>
         <!-- plugin versions -->
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
@@ -56,6 +57,11 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
             <version>${aws-java-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>${commons-math3.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
