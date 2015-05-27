@@ -51,6 +51,7 @@ public class S3PerformanceTest implements Runnable {
 
         s3Client.setEndpoint(endpointUrl);
 
+        // TODO: use a factory
         switch (operation) {
             case UPLOAD:
                 new Upload(s3Client, bucketName, n, size).run();
