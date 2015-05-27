@@ -6,6 +6,7 @@ package de.jeha.s3pt;
 public enum Operation {
 
     UPLOAD,
-    CLEAR_BUCKET
+    CLEAR_BUCKET,
+    RANDOM_READ
 
 }
