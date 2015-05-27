@@ -65,9 +65,6 @@ public class RandomRead implements Runnable {
 
             LOG.info("Time = {} ms", stopWatch.getTime());
         }
-
-
-        LOG.info("Time = {} ms", stopWatch.getTime());
     }
 
 }
