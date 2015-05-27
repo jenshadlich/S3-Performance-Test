@@ -62,7 +62,7 @@ public class RandomRead implements Runnable {
             try {
                 object.close();
             } catch (IOException e) {
-                LOG.warn("An exception occurred while trying to close {}", randomKey);
+                LOG.warn("An exception occurred while trying to close object with key: {}", randomKey);
             }
 
             stopWatch.stop();
