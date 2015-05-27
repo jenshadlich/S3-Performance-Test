@@ -1,7 +1,5 @@
-package de.jeha.s3pt.cli;
+package de.jeha.s3pt;
 
-import de.jeha.s3pt.S3PerformanceTest;
-import de.jeha.s3pt.TestMode;
 import org.apache.commons.lang3.time.StopWatch;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;

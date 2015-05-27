@@ -116,7 +116,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>de.jeha.s3pt.cli.Main</mainClass>
+                            <mainClass>de.jeha.s3pt.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
