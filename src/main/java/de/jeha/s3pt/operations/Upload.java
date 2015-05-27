@@ -53,7 +53,9 @@ public class Upload implements Runnable {
 
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
+
             s3Client.putObject(putObjectRequest);
+
             stopWatch.stop();
 
             LOG.info("Time = {} ms", stopWatch.getTime());

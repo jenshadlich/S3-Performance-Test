@@ -34,7 +34,9 @@ public class ClearBucket implements Runnable {
 
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
+
             s3Client.deleteObject(bucketName, objectSummary.getKey());
+
             stopWatch.stop();
 
             LOG.info("Time = {} ms", stopWatch.getTime());
