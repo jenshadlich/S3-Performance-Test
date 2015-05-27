@@ -38,8 +38,8 @@ public class Main {
     @Option(name = "--bucketName", usage = "name of bucket")
     private String bucketName;
 
-    @Option(name = "--testMode", usage = "test mode", hidden = true)
-    private String testMode = TestMode.UPLOAD.name();
+    @Option(name = "--operation", usage = "operation", hidden = true)
+    private String operation = Operation.UPLOAD.name();
 
     public static void main(String... args) throws IOException {
         Locale.setDefault(Locale.ENGLISH);
@@ -66,7 +66,17 @@ public class Main {
         StopWatch stopWatch = new StopWatch();
 
         stopWatch.start();
-        new S3PerformanceTest(accessKey, secretKey, endpointUrl, bucketName, TestMode.valueOf(testMode), n, size).run();
+
+        new S3PerformanceTest(
+                accessKey,
+                secretKey,
+                endpointUrl,
+                bucketName,
+                Operation.valueOf(operation),
+                n,
+                size
+        ).run();
+
         stopWatch.stop();
 
         LOG.info("Total time = {} ms", stopWatch.getTime());

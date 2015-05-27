@@ -4,8 +4,8 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import de.jeha.s3pt.tests.ClearBucket;
-import de.jeha.s3pt.tests.Upload;
+import de.jeha.s3pt.operations.ClearBucket;
+import de.jeha.s3pt.operations.Upload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class S3PerformanceTest implements Runnable {
     private final String secretKey;
     private final String endpointUrl;
     private final String bucketName;
-    private final TestMode testMode;
+    private final Operation operation;
     private final int n;
     private final int size;
 
@@ -33,12 +33,12 @@ public class S3PerformanceTest implements Runnable {
      * @param size        size for upload operations
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
-                             TestMode testMode, int n, int size) {
+                             Operation operation, int n, int size) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
         this.bucketName = bucketName;
-        this.testMode = testMode;
+        this.operation = operation;
         this.n = n;
         this.size = size;
     }
@@ -50,7 +50,7 @@ public class S3PerformanceTest implements Runnable {
 
         s3Client.setEndpoint(endpointUrl);
 
-        switch (testMode) {
+        switch (operation) {
             case UPLOAD:
                 new Upload(s3Client, bucketName, n, size).run();
                 break;
@@ -58,7 +58,7 @@ public class S3PerformanceTest implements Runnable {
                 new ClearBucket(s3Client, bucketName, n).run();
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown mode: " + testMode);
+                throw new UnsupportedOperationException("Unknown mode: " + operation);
         }
 
         LOG.info("Done");

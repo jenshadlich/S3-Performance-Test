@@ -1,4 +1,4 @@
-package de.jeha.s3pt.tests;
+package de.jeha.s3pt.operations;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
