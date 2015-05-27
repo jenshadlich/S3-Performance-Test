@@ -1,14 +1,13 @@
 package de.jeha.s3pt.operations;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -53,13 +52,18 @@ public class RandomRead implements Runnable {
         LOG.info("Files read for test: {}", filesRead);
 
         for (int i = 0; i < n; i++) {
-            final String randomKey= files.get(GENERATOR.nextInt(filesRead));
+            final String randomKey = files.get(GENERATOR.nextInt(files.size() - 1));
             LOG.info("Read file: {}", randomKey);
 
             stopWatch = new StopWatch();
             stopWatch.start();
 
-            s3Client.getObject(bucketName, randomKey);
+            S3Object object = s3Client.getObject(bucketName, randomKey);
+            try {
+                object.close();
+            } catch (IOException e) {
+                LOG.warn("An exception occurred while trying to close {}", randomKey);
+            }
 
             stopWatch.stop();
 
