@@ -34,7 +34,7 @@ public class RandomRead implements Runnable {
     public void run() {
         LOG.info("Random read: n={}", n);
 
-        LOG.info("Collect keys for test");
+        LOG.info("Collect files for test");
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
