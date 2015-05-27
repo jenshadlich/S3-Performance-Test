@@ -5,6 +5,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import de.jeha.s3pt.operations.ClearBucket;
+import de.jeha.s3pt.operations.RandomRead;
 import de.jeha.s3pt.operations.Upload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,9 @@ public class S3PerformanceTest implements Runnable {
                 break;
             case CLEAR_BUCKET:
                 new ClearBucket(s3Client, bucketName, n).run();
+                break;
+            case RANDOM_READ:
+                new RandomRead(s3Client, bucketName, n).run();
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown mode: " + operation);
