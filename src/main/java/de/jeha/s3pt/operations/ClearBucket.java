@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author jenshadlich@googlemail.com
  */
-public class ClearBucket implements Runnable {
+public class ClearBucket extends AbstractOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClearBucket.class);
 
@@ -40,6 +40,7 @@ public class ClearBucket implements Runnable {
             stopWatch.stop();
 
             LOG.info("Time = {} ms", stopWatch.getTime());
+            getStatistics().addValue(stopWatch.getTime());
 
             deleted++;
             if (deleted >= n) {
@@ -48,6 +49,7 @@ public class ClearBucket implements Runnable {
         }
 
         LOG.info("Files deleted: {}", deleted);
+        logStatistics();
     }
 
 }

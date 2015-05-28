@@ -15,7 +15,7 @@ import java.util.UUID;
 /**
  * @author jenshadlich@googlemail.com
  */
-public class Upload implements Runnable {
+public class Upload extends AbstractOperation {
 
     private final static Logger LOG = LoggerFactory.getLogger(Upload.class);
     private final static Random GENERATOR = new Random();
@@ -42,7 +42,6 @@ public class Upload implements Runnable {
             data[i] = (byte) GENERATOR.nextInt(255);
         }
 
-        DescriptiveStatistics statistics = new DescriptiveStatistics();
         for (int i = 0; i < n; i++) {
             final String key = UUID.randomUUID().toString();
             LOG.info("Uploading file: {}", key);
@@ -61,17 +60,9 @@ public class Upload implements Runnable {
             stopWatch.stop();
 
             LOG.info("Time = {} ms", stopWatch.getTime());
-            statistics.addValue(stopWatch.getTime());
+            getStatistics().addValue(stopWatch.getTime());
         }
 
-        LOG.info("Request statistics:");
-        LOG.info("min = {} ms", (int) statistics.getMin());
-        LOG.info("max = {} ms", (int) statistics.getMax());
-        LOG.info("avg = {} ms", (int) statistics.getGeometricMean());
-        LOG.info("p50 = {} ms", (int) statistics.getPercentile(50));
-        LOG.info("p75 = {} ms", (int) statistics.getPercentile(75));
-        LOG.info("p95 = {} ms", (int) statistics.getPercentile(95));
-        LOG.info("p98 = {} ms", (int) statistics.getPercentile(98));
-        LOG.info("p99 = {} ms", (int) statistics.getPercentile(99));
+        logStatistics();
     }
 }

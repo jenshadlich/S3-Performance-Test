@@ -16,7 +16,7 @@ import java.util.Random;
 /**
  * @author jenshadlich@googlemail.com
  */
-public class RandomRead implements Runnable {
+public class RandomRead extends AbstractOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(RandomRead.class);
     private final static Random GENERATOR = new Random();
@@ -52,7 +52,6 @@ public class RandomRead implements Runnable {
 
         LOG.info("Files read for test: {}", filesRead);
 
-        DescriptiveStatistics statistics = new DescriptiveStatistics();
         for (int i = 0; i < n; i++) {
             final String randomKey = files.get(GENERATOR.nextInt(files.size() - 1));
             LOG.info("Read file: {}", randomKey);
@@ -70,18 +69,10 @@ public class RandomRead implements Runnable {
             stopWatch.stop();
 
             LOG.info("Time = {} ms", stopWatch.getTime());
-            statistics.addValue(stopWatch.getTime());
+            getStatistics().addValue(stopWatch.getTime());
         }
 
-        LOG.info("Request statistics:");
-        LOG.info("min = {} ms", (int) statistics.getMin());
-        LOG.info("max = {} ms", (int) statistics.getMax());
-        LOG.info("avg = {} ms", (int) statistics.getGeometricMean());
-        LOG.info("p50 = {} ms", (int) statistics.getPercentile(50));
-        LOG.info("p75 = {} ms", (int) statistics.getPercentile(75));
-        LOG.info("p95 = {} ms", (int) statistics.getPercentile(95));
-        LOG.info("p98 = {} ms", (int) statistics.getPercentile(98));
-        LOG.info("p99 = {} ms", (int) statistics.getPercentile(99));
+        logStatistics();
     }
 
 }
