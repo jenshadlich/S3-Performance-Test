@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +43,8 @@ public class RandomRead implements Runnable {
         int filesRead = 0;
         Map<Integer, String> files = new HashMap<>();
         for (S3ObjectSummary objectSummary : s3Client.listObjects(bucketName).getObjectSummaries()) {
-            filesRead++;
             files.put(filesRead, objectSummary.getKey());
+            filesRead++;
         }
         stopWatch.stop();
 
@@ -51,6 +52,7 @@ public class RandomRead implements Runnable {
 
         LOG.info("Files read for test: {}", filesRead);
 
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
         for (int i = 0; i < n; i++) {
             final String randomKey = files.get(GENERATOR.nextInt(files.size() - 1));
             LOG.info("Read file: {}", randomKey);
@@ -68,7 +70,18 @@ public class RandomRead implements Runnable {
             stopWatch.stop();
 
             LOG.info("Time = {} ms", stopWatch.getTime());
+            statistics.addValue(stopWatch.getTime());
         }
+
+        LOG.info("Request statistics:");
+        LOG.info("min = {} ms", (int) statistics.getMin());
+        LOG.info("max = {} ms", (int) statistics.getMax());
+        LOG.info("avg = {} ms", (int) statistics.getGeometricMean());
+        LOG.info("p50 = {} ms", (int) statistics.getPercentile(50));
+        LOG.info("p75 = {} ms", (int) statistics.getPercentile(75));
+        LOG.info("p95 = {} ms", (int) statistics.getPercentile(95));
+        LOG.info("p98 = {} ms", (int) statistics.getPercentile(98));
+        LOG.info("p99 = {} ms", (int) statistics.getPercentile(99));
     }
 
 }

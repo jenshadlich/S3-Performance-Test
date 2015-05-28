@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ public class Upload implements Runnable {
             data[i] = (byte) GENERATOR.nextInt(255);
         }
 
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
         for (int i = 0; i < n; i++) {
             final String key = UUID.randomUUID().toString();
             LOG.info("Uploading file: {}", key);
@@ -59,6 +61,17 @@ public class Upload implements Runnable {
             stopWatch.stop();
 
             LOG.info("Time = {} ms", stopWatch.getTime());
+            statistics.addValue(stopWatch.getTime());
         }
+
+        LOG.info("Request statistics:");
+        LOG.info("min = {} ms", (int) statistics.getMin());
+        LOG.info("max = {} ms", (int) statistics.getMax());
+        LOG.info("avg = {} ms", (int) statistics.getGeometricMean());
+        LOG.info("p50 = {} ms", (int) statistics.getPercentile(50));
+        LOG.info("p75 = {} ms", (int) statistics.getPercentile(75));
+        LOG.info("p95 = {} ms", (int) statistics.getPercentile(95));
+        LOG.info("p98 = {} ms", (int) statistics.getPercentile(98));
+        LOG.info("p99 = {} ms", (int) statistics.getPercentile(99));
     }
 }
