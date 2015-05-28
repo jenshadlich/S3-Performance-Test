@@ -38,9 +38,7 @@ public class Upload extends AbstractOperation {
 
         // create some random data
         final byte data[] = new byte[size];
-        for (int i = 0; i < size; i++) {
-            data[i] = (byte) GENERATOR.nextInt(255);
-        }
+        GENERATOR.nextBytes(data);
 
         for (int i = 0; i < n; i++) {
             final String key = UUID.randomUUID().toString();
