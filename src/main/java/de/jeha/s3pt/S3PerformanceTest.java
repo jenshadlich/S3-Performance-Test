@@ -10,6 +10,9 @@ import de.jeha.s3pt.operations.Upload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * @author jenshadlich@googlemail.com
  */
@@ -22,6 +25,7 @@ public class S3PerformanceTest implements Runnable {
     private final String endpointUrl;
     private final String bucketName;
     private final Operation operation;
+    private final int threads;
     private final int n;
     private final int size;
 
@@ -34,12 +38,13 @@ public class S3PerformanceTest implements Runnable {
      * @param size        size for upload operations
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
-                             Operation operation, int n, int size) {
+                             Operation operation, int threads, int n, int size) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
         this.bucketName = bucketName;
         this.operation = operation;
+        this.threads = threads;
         this.n = n;
         this.size = size;
     }
@@ -51,20 +56,24 @@ public class S3PerformanceTest implements Runnable {
 
         s3Client.setEndpoint(endpointUrl);
 
+        ExecutorService executorService = Executors.newFixedThreadPool(threads);
+
         // TODO: use a factory
         switch (operation) {
             case UPLOAD:
-                new Upload(s3Client, bucketName, n, size).run();
+                executorService.submit(new Upload(s3Client, bucketName, n, size));
                 break;
             case CLEAR_BUCKET:
-                new ClearBucket(s3Client, bucketName, n).run();
+                executorService.submit(new ClearBucket(s3Client, bucketName, n));
                 break;
             case RANDOM_READ:
-                new RandomRead(s3Client, bucketName, n).run();
+                executorService.submit(new RandomRead(s3Client, bucketName, n));
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown mode: " + operation);
         }
+
+        executorService.shutdown();
 
         LOG.info("Done");
     }

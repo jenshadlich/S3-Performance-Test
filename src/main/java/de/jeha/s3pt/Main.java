@@ -73,6 +73,7 @@ public class Main {
                 endpointUrl,
                 bucketName,
                 Operation.valueOf(operation),
+                threads,
                 n,
                 size
         ).run();
