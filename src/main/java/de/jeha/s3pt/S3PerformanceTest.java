@@ -4,6 +4,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import de.jeha.s3pt.operations.AbstractOperation;
 import de.jeha.s3pt.operations.ClearBucket;
 import de.jeha.s3pt.operations.RandomRead;
 import de.jeha.s3pt.operations.Upload;
@@ -53,29 +54,25 @@ public class S3PerformanceTest implements Runnable {
     public void run() {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         AmazonS3 s3Client = new AmazonS3Client(credentials);
-
         s3Client.setEndpoint(endpointUrl);
 
         ExecutorService executorService = Executors.newFixedThreadPool(threads);
-
-        // TODO: use a factory
-        switch (operation) {
-            case UPLOAD:
-                executorService.submit(new Upload(s3Client, bucketName, n, size));
-                break;
-            case CLEAR_BUCKET:
-                executorService.submit(new ClearBucket(s3Client, bucketName, n));
-                break;
-            case RANDOM_READ:
-                executorService.submit(new RandomRead(s3Client, bucketName, n));
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown mode: " + operation);
-        }
-
+        executorService.submit(createOperation(operation, s3Client));
         executorService.shutdown();
 
         LOG.info("Done");
     }
 
+    private AbstractOperation createOperation(Operation operation, AmazonS3 s3Client) {
+        switch (operation) {
+            case UPLOAD:
+                return new Upload(s3Client, bucketName, n, size);
+            case CLEAR_BUCKET:
+                return new ClearBucket(s3Client, bucketName, n);
+            case RANDOM_READ:
+                return new RandomRead(s3Client, bucketName, n);
+            default:
+                throw new UnsupportedOperationException("Unknown operation: " + operation);
+        }
+    }
 }
