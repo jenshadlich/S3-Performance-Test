@@ -5,8 +5,18 @@ package de.jeha.s3pt;
  */
 public enum Operation {
 
-    UPLOAD,
-    CLEAR_BUCKET,
-    RANDOM_READ
+    UPLOAD(false),
+    CLEAR_BUCKET(false),
+    RANDOM_READ(true);
+
+    private final boolean multiThreaded;
+
+    Operation(boolean multiThreaded) {
+        this.multiThreaded = multiThreaded;
+    }
+
+    public boolean isMultiThreaded() {
+        return multiThreaded;
+    }
 
 }
