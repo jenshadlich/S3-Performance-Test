@@ -2,13 +2,19 @@
 Performance test tool for Amazon S3 or S3-compatible object storage like Ceph with radosgw.
 
 ##### Build:
-(requires Java 7 or higher)
+(requires Java 8 or higher)
 ```
 mvn clean install
 ```
 
 ##### Usage:
+
+###### UPLOAD of n randomly generated files (key = UUID), each 2kB size
 ```
-java -jar target/s3-pt.jar --accessKey <accessKey> --secretKey <secretKey> --bucketName <bucketName> -n <number of files to upload>
+java -jar target/s3-pt.jar --accessKey <accessKey> --secretKey <secretKey> --bucketName <bucketName> -n <number of files to upload> -s 2048
 ```
 
+###### RANDOM_READ with 4 parallel threads, each 10.000 reads = 40.000 requests
+```
+java -jar target/s3-pt.jar --accessKey <accessKey> --secretKey <secretKey> --bucketName <bucketName> --operation=RANDOM_READ -n 10000 -t 4
+```
