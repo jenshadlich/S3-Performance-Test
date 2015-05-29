@@ -3,8 +3,8 @@ package de.jeha.s3pt.operations;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import de.jeha.s3pt.OperationResult;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,8 @@ public class Upload extends AbstractOperation {
     }
 
     @Override
-    public void run() {
+    public OperationResult call() {
+
         LOG.info("Upload: n={}, size={} byte", n, size);
 
         // create some random data
@@ -42,7 +43,7 @@ public class Upload extends AbstractOperation {
 
         for (int i = 0; i < n; i++) {
             final String key = UUID.randomUUID().toString();
-            LOG.info("Uploading file: {}", key);
+            LOG.debug("Uploading file: {}", key);
 
             final ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(data.length);
@@ -57,10 +58,10 @@ public class Upload extends AbstractOperation {
 
             stopWatch.stop();
 
-            LOG.info("Time = {} ms", stopWatch.getTime());
+            LOG.debug("Time = {} ms", stopWatch.getTime());
             getStatistics().addValue(stopWatch.getTime());
         }
 
-        logStatistics();
+        return new OperationResult(getStatistics());
     }
 }

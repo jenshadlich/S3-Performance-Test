@@ -2,6 +2,7 @@ package de.jeha.s3pt.operations;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import de.jeha.s3pt.OperationResult;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +25,13 @@ public class ClearBucket extends AbstractOperation {
     }
 
     @Override
-    public void run() {
+    public OperationResult call() throws Exception {
         LOG.info("Clear bucket: n={}", n);
 
         // TODO: properly support pagination
         int deleted = 0;
         for (S3ObjectSummary objectSummary : s3Client.listObjects(bucketName).getObjectSummaries()) {
-            LOG.info("Delete file: {}", objectSummary.getKey());
+            LOG.debug("Delete file: {}", objectSummary.getKey());
 
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
@@ -39,7 +40,7 @@ public class ClearBucket extends AbstractOperation {
 
             stopWatch.stop();
 
-            LOG.info("Time = {} ms", stopWatch.getTime());
+            LOG.debug("Time = {} ms", stopWatch.getTime());
             getStatistics().addValue(stopWatch.getTime());
 
             deleted++;
@@ -49,7 +50,7 @@ public class ClearBucket extends AbstractOperation {
         }
 
         LOG.info("Files deleted: {}", deleted);
-        logStatistics();
-    }
 
+        return new OperationResult(getStatistics());
+    }
 }

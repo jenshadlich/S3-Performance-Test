@@ -13,8 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * @author jenshadlich@googlemail.com
@@ -60,16 +59,30 @@ public class S3PerformanceTest implements Runnable {
 
         ExecutorService executorService = Executors.newFixedThreadPool(threads);
 
-        List<Runnable> operations = new ArrayList<>();
+        List<Callable<OperationResult>> operations = new ArrayList<>();
         if (operation.isMultiThreaded()) {
             for (int i = 0; i < threads; i++) {
                 operations.add(createOperation(operation, s3Client));
             }
         } else {
+            if (threads > 1) {
+                LOG.warn("operation {} does not support multiple threads, use single thread", operation);
+            }
             operations.add(createOperation(operation, s3Client));
         }
 
-        operations.forEach(executorService::submit);
+        try {
+            List<Future<OperationResult>> futureResults = executorService.invokeAll(operations);
+
+            List<OperationResult> results = new ArrayList<>();
+            for (Future<OperationResult> result : futureResults) {
+                results.add(result.get());
+            }
+            results.forEach(this::printResult);
+
+        } catch (InterruptedException | ExecutionException e) {
+            LOG.error("An error occurred", e);
+        }
 
         executorService.shutdown();
 
@@ -88,4 +101,18 @@ public class S3PerformanceTest implements Runnable {
                 throw new UnsupportedOperationException("Unknown operation: " + operation);
         }
     }
+
+    protected void printResult(OperationResult result) {
+        LOG.info("Request statistics:");
+        LOG.info("min = {} ms", (int) result.getStatistics().getMin());
+        LOG.info("max = {} ms", (int) result.getStatistics().getMax());
+        LOG.info("avg = {} ms", (int) result.getStatistics().getGeometricMean());
+        LOG.info("p50 = {} ms", (int) result.getStatistics().getPercentile(50));
+        LOG.info("p75 = {} ms", (int) result.getStatistics().getPercentile(75));
+        LOG.info("p95 = {} ms", (int) result.getStatistics().getPercentile(95));
+        LOG.info("p98 = {} ms", (int) result.getStatistics().getPercentile(98));
+        LOG.info("p99 = {} ms", (int) result.getStatistics().getPercentile(99));
+        LOG.info("throughput = {} req/s", result.getStatistics().getSum() / result.getStatistics().getN());
+    }
+
 }

@@ -3,8 +3,8 @@ package de.jeha.s3pt.operations;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import de.jeha.s3pt.OperationResult;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class RandomRead extends AbstractOperation {
     }
 
     @Override
-    public void run() {
+    public OperationResult call() {
         LOG.info("Random read: n={}", n);
 
         LOG.info("Collect files for test");
@@ -56,7 +56,7 @@ public class RandomRead extends AbstractOperation {
 
         for (int i = 0; i < n; i++) {
             final String randomKey = files.get(GENERATOR.nextInt(files.size() - 1));
-            LOG.info("Read file: {}", randomKey);
+            LOG.debug("Read file: {}", randomKey);
 
             stopWatch = new StopWatch();
             stopWatch.start();
@@ -70,11 +70,11 @@ public class RandomRead extends AbstractOperation {
 
             stopWatch.stop();
 
-            LOG.info("Time = {} ms", stopWatch.getTime());
+            LOG.debug("Time = {} ms", stopWatch.getTime());
             getStatistics().addValue(stopWatch.getTime());
         }
 
-        logStatistics();
+        return new OperationResult(getStatistics());
     }
 
 }
