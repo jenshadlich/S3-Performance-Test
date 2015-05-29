@@ -17,7 +17,7 @@ public class Main {
 
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
-    @Option(name = "-t", usage = "number of threads", hidden = true)
+    @Option(name = "-t", usage = "number of threads")
     private int threads = 1;
 
     @Option(name = "-n", usage = "number of operations", required = true)

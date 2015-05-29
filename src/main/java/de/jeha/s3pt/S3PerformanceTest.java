@@ -11,6 +11,8 @@ import de.jeha.s3pt.operations.Upload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,7 +59,18 @@ public class S3PerformanceTest implements Runnable {
         s3Client.setEndpoint(endpointUrl);
 
         ExecutorService executorService = Executors.newFixedThreadPool(threads);
-        executorService.submit(createOperation(operation, s3Client));
+
+        List<Runnable> operations = new ArrayList<>();
+        if (operation.isMultiThreaded()) {
+            for (int i = 0; i < threads; i++) {
+                operations.add(createOperation(operation, s3Client));
+            }
+        } else {
+            operations.add(createOperation(operation, s3Client));
+        }
+
+        operations.forEach(executorService::submit);
+
         executorService.shutdown();
 
         LOG.info("Done");
