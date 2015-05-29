@@ -42,6 +42,8 @@ public class RandomRead extends AbstractOperation {
 
         int filesRead = 0;
         Map<Integer, String> files = new HashMap<>();
+        // this should give a thousand objects
+        // TODO: make it explicit and support pagination
         for (S3ObjectSummary objectSummary : s3Client.listObjects(bucketName).getObjectSummaries()) {
             files.put(filesRead, objectSummary.getKey());
             filesRead++;
