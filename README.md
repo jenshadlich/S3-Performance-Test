@@ -18,3 +18,17 @@ java -jar target/s3-pt.jar --accessKey <accessKey> --secretKey <secretKey> --buc
 ```
 java -jar target/s3-pt.jar --accessKey <accessKey> --secretKey <secretKey> --bucketName <bucketName> --operation=RANDOM_READ -n 10000 -t 4
 ```
+
+###### General usage:
+
+```
+java -jar s3-pt.jar [options...]
+ --accessKey VAL   : access key ID
+ --bucketName VAL  : name of bucket
+ --endpointUrl VAL : endpoint url (default: s3.amazonaws.com)
+ --secretKey VAL   : secret access key
+ --size N          : number of files (default: 131072)
+ -n N              : number of operations
+```
+
+To print the usage information execute `java -jar target/s3-pt.jar` on the command line.
