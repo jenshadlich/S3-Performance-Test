@@ -7,13 +7,13 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  */
 public class OperationResult {
 
-    private final DescriptiveStatistics statistics;
+    private final DescriptiveStatistics stats;
 
-    public OperationResult(DescriptiveStatistics statistics) {
-        this.statistics = statistics;
+    public OperationResult(DescriptiveStatistics stats) {
+        this.stats = stats;
     }
 
-    public DescriptiveStatistics getStatistics() {
-        return statistics;
+    public DescriptiveStatistics getStats() {
+        return stats;
     }
 }

@@ -41,7 +41,7 @@ public class ClearBucket extends AbstractOperation {
             stopWatch.stop();
 
             LOG.debug("Time = {} ms", stopWatch.getTime());
-            getStatistics().addValue(stopWatch.getTime());
+            getStats().addValue(stopWatch.getTime());
 
             deleted++;
             if (deleted >= n) {
@@ -51,6 +51,6 @@ public class ClearBucket extends AbstractOperation {
 
         LOG.info("Files deleted: {}", deleted);
 
-        return new OperationResult(getStatistics());
+        return new OperationResult(getStats());
     }
 }

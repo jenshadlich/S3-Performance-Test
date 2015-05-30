@@ -59,9 +59,9 @@ public class Upload extends AbstractOperation {
             stopWatch.stop();
 
             LOG.debug("Time = {} ms", stopWatch.getTime());
-            getStatistics().addValue(stopWatch.getTime());
+            getStats().addValue(stopWatch.getTime());
         }
 
-        return new OperationResult(getStatistics());
+        return new OperationResult(getStats());
     }
 }
