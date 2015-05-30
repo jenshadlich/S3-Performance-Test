@@ -78,7 +78,8 @@ public class S3PerformanceTest implements Runnable {
             for (Future<OperationResult> result : futureResults) {
                 results.add(result.get());
             }
-            results.forEach(this::printResult);
+
+            printResults(results);
 
         } catch (InterruptedException | ExecutionException e) {
             LOG.error("An error occurred", e);
@@ -102,17 +103,27 @@ public class S3PerformanceTest implements Runnable {
         }
     }
 
-    protected void printResult(OperationResult result) {
+    private void printResults(List<OperationResult> results) {
+        int min = (int) results.stream().mapToDouble(x -> x.getStatistics().getMin()).average().getAsDouble();
+        int max = (int) results.stream().mapToDouble(x -> x.getStatistics().getMax()).average().getAsDouble();
+        int avg = (int) results.stream().mapToDouble(x -> x.getStatistics().getGeometricMean()).average().getAsDouble();
+        int p50 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(50)).average().getAsDouble();
+        int p75 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(75)).average().getAsDouble();
+        int p95 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(95)).average().getAsDouble();
+        int p98 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(98)).average().getAsDouble();
+        int p99 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(99)).average().getAsDouble();
+        double throughput = results.stream().mapToDouble(x -> x.getStatistics().getSum() / x.getStatistics().getN()).sum();
+
         LOG.info("Request statistics:");
-        LOG.info("min = {} ms", (int) result.getStatistics().getMin());
-        LOG.info("max = {} ms", (int) result.getStatistics().getMax());
-        LOG.info("avg = {} ms", (int) result.getStatistics().getGeometricMean());
-        LOG.info("p50 = {} ms", (int) result.getStatistics().getPercentile(50));
-        LOG.info("p75 = {} ms", (int) result.getStatistics().getPercentile(75));
-        LOG.info("p95 = {} ms", (int) result.getStatistics().getPercentile(95));
-        LOG.info("p98 = {} ms", (int) result.getStatistics().getPercentile(98));
-        LOG.info("p99 = {} ms", (int) result.getStatistics().getPercentile(99));
-        LOG.info("throughput = {} req/s", result.getStatistics().getSum() / result.getStatistics().getN());
+        LOG.info("min = {} ms", min);
+        LOG.info("max = {} ms", max);
+        LOG.info("avg = {} ms", avg);
+        LOG.info("p50 = {} ms", p50);
+        LOG.info("p75 = {} ms", p75);
+        LOG.info("p95 = {} ms", p95);
+        LOG.info("p98 = {} ms", p98);
+        LOG.info("p99 = {} ms", p99);
+        LOG.info("throughput = {} req/s", throughput);
     }
 
 }
