@@ -104,14 +104,14 @@ public class S3PerformanceTest implements Runnable {
     }
 
     private void printResults(List<OperationResult> results) {
-        int min = (int) results.stream().mapToDouble(x -> x.getStatistics().getMin()).average().getAsDouble();
-        int max = (int) results.stream().mapToDouble(x -> x.getStatistics().getMax()).average().getAsDouble();
-        int avg = (int) results.stream().mapToDouble(x -> x.getStatistics().getGeometricMean()).average().getAsDouble();
-        int p50 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(50)).average().getAsDouble();
-        int p75 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(75)).average().getAsDouble();
-        int p95 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(95)).average().getAsDouble();
-        int p98 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(98)).average().getAsDouble();
-        int p99 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(99)).average().getAsDouble();
+        int min = (int) results.stream().mapToDouble(x -> x.getStatistics().getMin()).average().orElse(0.0);
+        int max = (int) results.stream().mapToDouble(x -> x.getStatistics().getMax()).average().orElse(0.0);
+        int avg = (int) results.stream().mapToDouble(x -> x.getStatistics().getGeometricMean()).average().orElse(0.0);
+        int p50 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(50)).average().orElse(0.0);
+        int p75 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(75)).average().orElse(0.0);
+        int p95 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(95)).average().orElse(0.0);
+        int p98 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(98)).average().orElse(0.0);
+        int p99 = (int) results.stream().mapToDouble(x -> x.getStatistics().getPercentile(99)).average().orElse(0.0);
         double throughput = results.stream().mapToDouble(x -> x.getStatistics().getSum() / x.getStatistics().getN()).sum();
 
         LOG.info("Request statistics:");
@@ -123,7 +123,7 @@ public class S3PerformanceTest implements Runnable {
         LOG.info("p95 = {} ms", p95);
         LOG.info("p98 = {} ms", p98);
         LOG.info("p99 = {} ms", p99);
-        LOG.info("throughput = {} req/s", throughput);
+        LOG.info("throughput = {} req/s ({} threads)", throughput, threads);
     }
 
 }
