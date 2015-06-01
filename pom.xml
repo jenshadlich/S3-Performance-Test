@@ -17,6 +17,12 @@
         </developer>
     </developers>
 
+    <scm>
+        <connection>scm:git:git://github.com/jenshadlich/S3-Performance-Test.git</connection>
+        <developerConnection>scm:git:git@github.com:jenshadlich/S3-Performance-Test.git</developerConnection>
+        <url>https://github.com/jenshadlich/S3-Performance-Test.git</url>
+    </scm>
+
     <properties>
         <project.target.jdk>1.8</project.target.jdk>
         <project.source.jdk>1.8</project.source.jdk>
