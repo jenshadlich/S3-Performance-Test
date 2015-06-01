@@ -41,6 +41,7 @@
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
         <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
         <maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
+        <maven-release-plugin.version>2.4</maven-release-plugin.version>
     </properties>
 
     <dependencies>
@@ -140,6 +141,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
             </plugin>
         </plugins>
 
