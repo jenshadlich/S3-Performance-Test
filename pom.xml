@@ -20,7 +20,6 @@
         <connection>scm:git:git://github.com/jenshadlich/S3-Performance-Test.git</connection>
         <developerConnection>scm:git:https://github.com/jenshadlich/S3-Performance-Test.git</developerConnection>
         <url>https://github.com/jenshadlich/S3-Performance-Test.git</url>
-        <tag>s3pt-0.1</tag>
     </scm>
 
     <properties>
