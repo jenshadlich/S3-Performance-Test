@@ -7,7 +7,7 @@ Performance test tool for Amazon S3 or S3-compatible object storage like Ceph wi
 mvn clean install
 ```
 
-##### Usage:
+##### Usage by example:
 
 ###### UPLOAD of n randomly generated files (key = UUID), each 2kB size
 ```
