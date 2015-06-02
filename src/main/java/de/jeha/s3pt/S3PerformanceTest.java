@@ -119,7 +119,8 @@ public class S3PerformanceTest implements Runnable {
         int p95 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(95)).average().orElse(0.0);
         int p98 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(98)).average().orElse(0.0);
         int p99 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(99)).average().orElse(0.0);
-        double throughput = results.stream().mapToDouble(x -> x.getStats().getSum() / x.getStats().getN()).sum();
+        double throughputPerSecond =
+                results.stream().mapToDouble(x -> x.getStats().getN() / x.getStats().getSum() * 1000).sum();
 
         LOG.info("Request statistics:");
         LOG.info("min = {} ms", min);
@@ -130,7 +131,7 @@ public class S3PerformanceTest implements Runnable {
         LOG.info("p95 = {} ms", p95);
         LOG.info("p98 = {} ms", p98);
         LOG.info("p99 = {} ms", p99);
-        LOG.info("throughput = {} req/s ({} threads)", throughput, threads);
+        LOG.info("throughput = {} requests/s ({} threads)", (int) throughputPerSecond, threads);
     }
 
 }
