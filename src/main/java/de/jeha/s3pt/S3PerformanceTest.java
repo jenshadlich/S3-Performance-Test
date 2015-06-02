@@ -4,10 +4,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import de.jeha.s3pt.operations.AbstractOperation;
-import de.jeha.s3pt.operations.ClearBucket;
-import de.jeha.s3pt.operations.RandomRead;
-import de.jeha.s3pt.operations.Upload;
+import de.jeha.s3pt.operations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +91,8 @@ public class S3PerformanceTest implements Runnable {
         switch (operation) {
             case UPLOAD:
                 return new Upload(s3Client, bucketName, n, size);
+            case CREATE_BUCKET:
+                return new CreateBucket(s3Client, bucketName);
             case CLEAR_BUCKET:
                 return new ClearBucket(s3Client, bucketName, n);
             case RANDOM_READ:
