@@ -1,5 +1,7 @@
 package de.jeha.s3pt;
 
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -27,6 +29,7 @@ public class S3PerformanceTest implements Runnable {
     private final int threads;
     private final int n;
     private final int size;
+    private final boolean isSecure;
 
     /**
      * @param accessKey   access key
@@ -37,7 +40,7 @@ public class S3PerformanceTest implements Runnable {
      * @param size        size for upload operations
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
-                             Operation operation, int threads, int n, int size) {
+                             Operation operation, int threads, int n, int size, boolean isSecure) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
@@ -46,12 +49,17 @@ public class S3PerformanceTest implements Runnable {
         this.threads = threads;
         this.n = n;
         this.size = size;
+        this.isSecure = isSecure;
     }
 
     @Override
     public void run() {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-        AmazonS3 s3Client = new AmazonS3Client(credentials);
+
+        ClientConfiguration clientConfig = new ClientConfiguration();
+        clientConfig.setProtocol(isSecure ? Protocol.HTTPS : Protocol.HTTP);
+
+        AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfig);
         s3Client.setEndpoint(endpointUrl);
 
         ExecutorService executorService = Executors.newFixedThreadPool(threads);

@@ -41,6 +41,9 @@ public class Main {
     @Option(name = "--operation", usage = "operation", hidden = true)
     private String operation = Operation.UPLOAD.name();
 
+    @Option(name = "--isSecure", usage = "use https if true, otherwise http", hidden = true)
+    private boolean isSecure = true;
+
     public static void main(String... args) throws IOException {
         Locale.setDefault(Locale.ENGLISH);
 
@@ -75,7 +78,8 @@ public class Main {
                 Operation.valueOf(operation),
                 threads,
                 n,
-                size
+                size,
+                isSecure
         ).run();
 
         stopWatch.stop();
