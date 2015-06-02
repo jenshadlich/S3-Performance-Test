@@ -4,6 +4,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.kohsuke.args4j.spi.BooleanOptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +42,8 @@ public class Main {
     @Option(name = "--operation", usage = "operation", hidden = true)
     private String operation = Operation.UPLOAD.name();
 
-    @Option(name = "--isSecure", usage = "use https if true, otherwise http", hidden = true)
-    private boolean isSecure = true;
+    @Option(name = "--http", usage = "use http instead of https")
+    private boolean useHttp = false;
 
     public static void main(String... args) throws IOException {
         Locale.setDefault(Locale.ENGLISH);
@@ -79,7 +80,7 @@ public class Main {
                 threads,
                 n,
                 size,
-                isSecure
+                useHttp
         ).run();
 
         stopWatch.stop();
