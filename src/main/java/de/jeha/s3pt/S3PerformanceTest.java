@@ -124,7 +124,7 @@ public class S3PerformanceTest implements Runnable {
         int p99 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(99)).average().orElse(0.0);
         double ops = results.stream().mapToDouble(x -> x.getStats().getN() / x.getStats().getSum() * 1000).sum();
 
-        LOG.info("Request statistics:");
+        LOG.info("Operation statistics:");
         LOG.info("min = {} ms", min);
         LOG.info("max = {} ms", max);
         LOG.info("avg = {} ms", avg);
