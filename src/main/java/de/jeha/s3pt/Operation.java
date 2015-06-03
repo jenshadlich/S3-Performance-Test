@@ -5,10 +5,11 @@ package de.jeha.s3pt;
  */
 public enum Operation {
 
-    UPLOAD(false),
-    CREATE_BUCKET(false),
     CLEAR_BUCKET(false),
-    RANDOM_READ(true);
+    CREATE_BUCKET(false),
+    RANDOM_READ(true),
+    UPLOAD_AND_READ(true),
+    UPLOAD(true);
 
     private final boolean multiThreaded;
 

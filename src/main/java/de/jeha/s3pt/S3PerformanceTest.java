@@ -98,14 +98,16 @@ public class S3PerformanceTest implements Runnable {
 
     private AbstractOperation createOperation(Operation operation, AmazonS3 s3Client) {
         switch (operation) {
-            case UPLOAD:
-                return new Upload(s3Client, bucketName, n, size);
-            case CREATE_BUCKET:
-                return new CreateBucket(s3Client, bucketName);
             case CLEAR_BUCKET:
                 return new ClearBucket(s3Client, bucketName, n);
+            case CREATE_BUCKET:
+                return new CreateBucket(s3Client, bucketName);
             case RANDOM_READ:
                 return new RandomRead(s3Client, bucketName, n);
+            case UPLOAD:
+                return new Upload(s3Client, bucketName, n, size);
+            case UPLOAD_AND_READ:
+                return new UploadAndRead(s3Client, bucketName, n, size);
             default:
                 throw new UnsupportedOperationException("Unknown operation: " + operation);
         }
