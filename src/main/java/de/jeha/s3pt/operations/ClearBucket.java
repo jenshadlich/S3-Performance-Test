@@ -1,6 +1,7 @@
 package de.jeha.s3pt.operations;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import de.jeha.s3pt.OperationResult;
 import org.apache.commons.lang3.time.StopWatch;
@@ -28,26 +29,31 @@ public class ClearBucket extends AbstractOperation {
     public OperationResult call() throws Exception {
         LOG.info("Clear bucket: n={}", n);
 
-        // TODO: properly support pagination
         int deleted = 0;
-        for (S3ObjectSummary objectSummary : s3Client.listObjects(bucketName).getObjectSummaries()) {
-            LOG.debug("Delete file: {}", objectSummary.getKey());
+        boolean truncated;
+        do {
+            ObjectListing objectListing = s3Client.listObjects(bucketName);
+            truncated = objectListing.isTruncated();
 
-            StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
+            for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+                LOG.debug("Delete file: {}, #deleted {}", objectSummary.getKey(), deleted);
 
-            s3Client.deleteObject(bucketName, objectSummary.getKey());
+                StopWatch stopWatch = new StopWatch();
+                stopWatch.start();
 
-            stopWatch.stop();
+                s3Client.deleteObject(bucketName, objectSummary.getKey());
 
-            LOG.debug("Time = {} ms", stopWatch.getTime());
-            getStats().addValue(stopWatch.getTime());
+                stopWatch.stop();
 
-            deleted++;
-            if (deleted >= n) {
-                break;
+                LOG.debug("Time = {} ms", stopWatch.getTime());
+                getStats().addValue(stopWatch.getTime());
+
+                deleted++;
+                if (deleted >= n) {
+                    break;
+                }
             }
-        }
+        } while (truncated && deleted < n);
 
         LOG.info("Files deleted: {}", deleted);
 
