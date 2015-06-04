@@ -26,9 +26,11 @@ java -jar s3-pt.jar [options...]
  --accessKey VAL   : access key ID
  --bucketName VAL  : name of bucket
  --endpointUrl VAL : endpoint url (default: s3.amazonaws.com)
+ --http            : use http instead of https (default: false)
  --secretKey VAL   : secret access key
  --size N          : number of files (default: 131072)
  -n N              : number of operations
+ -t N              : number of threads (default: 1)
 ```
 
 To print the usage information execute `java -jar target/s3-pt.jar` on the command line.
