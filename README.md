@@ -26,7 +26,9 @@ java -jar s3pt.jar [options...]
  --accessKey VAL   : access key ID
  --bucketName VAL  : name of bucket
  --endpointUrl VAL : endpoint url (default: s3.amazonaws.com)
+ --gzip            : use gzip (default: false)
  --http            : use http instead of https (default: false)
+ --operation VAL   : operation (default: UPLOAD)
  --secretKey VAL   : secret access key
  --size N          : number of files (default: 131072)
  -n N              : number of operations
