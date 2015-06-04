@@ -38,11 +38,14 @@ public class Main {
     @Option(name = "--bucketName", usage = "name of bucket")
     private String bucketName;
 
-    @Option(name = "--operation", usage = "operation", hidden = true)
+    @Option(name = "--operation", usage = "operation")
     private String operation = Operation.UPLOAD.name();
 
     @Option(name = "--http", usage = "use http instead of https")
     private boolean useHttp = false;
+
+    @Option(name = "--gzip", usage = "use gzip")
+    private boolean useGzip = false;
 
     public static void main(String... args) throws IOException {
         Locale.setDefault(Locale.ENGLISH);
@@ -79,7 +82,8 @@ public class Main {
                 threads,
                 n,
                 size,
-                useHttp
+                useHttp,
+                useGzip
         ).run();
 
         stopWatch.stop();

@@ -30,6 +30,7 @@ public class S3PerformanceTest implements Runnable {
     private final int n;
     private final int size;
     private final boolean useHttp;
+    private final boolean useGzip;
 
     /**
      * @param accessKey   access key
@@ -40,7 +41,7 @@ public class S3PerformanceTest implements Runnable {
      * @param size        size for upload operations
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
-                             Operation operation, int threads, int n, int size, boolean useHttp) {
+                             Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
@@ -50,6 +51,7 @@ public class S3PerformanceTest implements Runnable {
         this.n = n;
         this.size = size;
         this.useHttp = useHttp;
+        this.useGzip = useGzip;
     }
 
     @Override
@@ -58,7 +60,8 @@ public class S3PerformanceTest implements Runnable {
 
         ClientConfiguration clientConfig = new ClientConfiguration()
                 .withProtocol(useHttp ? Protocol.HTTP : Protocol.HTTPS)
-                .withUserAgent("s3pt");
+                .withUserAgent("s3pt")
+                .withGzip(useGzip);
 
         AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfig);
         s3Client.setEndpoint(endpointUrl);
