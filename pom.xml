@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.jeha.s3pt</groupId>
     <artifactId>s3pt</artifactId>
     <name>S3 Performance Test</name>
     <packaging>jar</packaging>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <description>A tool to test the performance of Amazon S3 or S3-compatible object storage like Ceph with radosgw</description>
 
     <developers>
@@ -20,7 +19,8 @@
         <connection>scm:git:git://github.com/jenshadlich/S3-Performance-Test.git</connection>
         <developerConnection>scm:git:https://github.com/jenshadlich/S3-Performance-Test.git</developerConnection>
         <url>https://github.com/jenshadlich/S3-Performance-Test.git</url>
-    </scm>
+      <tag>s3pt-0.2</tag>
+  </scm>
 
     <properties>
         <project.target.jdk>1.8</project.target.jdk>
