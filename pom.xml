@@ -121,8 +121,9 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${maven-assembly-plugin.version}</version>
                 <configuration>
-                    <finalName>s3-pt</finalName>
+                    <finalName>s3pt</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
+                    <attach>false</attach>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>

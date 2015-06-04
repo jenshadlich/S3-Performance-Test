@@ -59,7 +59,7 @@ public class Main {
         } catch (CmdLineException e) {
 
             System.err.println(e.getMessage());
-            System.err.println("java -jar s3-pt.jar [options...]");
+            System.err.println("java -jar s3pt.jar [options...]");
             parser.printUsage(System.err);
             System.err.println();
 
