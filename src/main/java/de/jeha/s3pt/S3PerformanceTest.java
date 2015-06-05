@@ -61,7 +61,9 @@ public class S3PerformanceTest implements Runnable {
         ClientConfiguration clientConfig = new ClientConfiguration()
                 .withProtocol(useHttp ? Protocol.HTTP : Protocol.HTTPS)
                 .withUserAgent("s3pt")
-                .withGzip(useGzip);
+                .withGzip(useGzip)
+                .withSignerOverride("S3Signer");
+        new ClientConfiguration().withSignerOverride("S3Signer");
 
         AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfig);
         s3Client.setEndpoint(endpointUrl);

@@ -1,5 +1,7 @@
 package de.jeha.s3pt;
 
+import com.amazonaws.auth.SignerFactory;
+import com.amazonaws.services.s3.internal.S3Signer;
 import org.apache.commons.lang3.time.StopWatch;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -49,6 +51,9 @@ public class Main {
 
     public static void main(String... args) throws IOException {
         Locale.setDefault(Locale.ENGLISH);
+
+        // register "old" signer because Ceph / radosgw does not support SigV4 signing
+        SignerFactory.registerSigner("S3Signer", S3Signer.class);
 
         new Main().run(args);
     }

@@ -33,8 +33,7 @@
         <args4j.version>2.32</args4j.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <commons-math3.version>3.5</commons-math3.version>
-        <!-- latest version is 1.9.39 but must stick with 1.9.4 because Ceph / radosgw does not support S3v4 authentication -->
-        <aws-java-sdk.version>1.9.4</aws-java-sdk.version>
+        <aws-java-sdk.version>1.9.39</aws-java-sdk.version>
         <!-- plugin versions -->
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
