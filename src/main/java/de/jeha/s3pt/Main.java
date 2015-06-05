@@ -2,6 +2,7 @@ package de.jeha.s3pt;
 
 import com.amazonaws.auth.SignerFactory;
 import com.amazonaws.services.s3.internal.S3Signer;
+import de.jeha.s3pt.args4j.IntFromByteUnitOptionHandler;
 import org.apache.commons.lang3.time.StopWatch;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -26,8 +27,8 @@ public class Main {
     @Option(name = "-n", aliases = {"--number"}, usage = "number of operations", required = true)
     private int n;
 
-    @Option(name = "--size", usage = "file size (e.g. for UPLOAD)")
-    private int size = 128 * 1024; // 128 kb
+    @Option(name = "--size", usage = "file size (e.g. for UPLOAD); supported units: B, K, M", handler = IntFromByteUnitOptionHandler.class)
+    private int size = 64 * 1024; // 64K
 
     @Option(name = "--accessKey", usage = "access key ID", required = true)
     private String accessKey;
