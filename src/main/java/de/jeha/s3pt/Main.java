@@ -18,6 +18,7 @@ import java.util.Locale;
 public class Main {
 
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+    private static final String DEFAULT_S3_ENDPOINT = "s3.amazonaws.com";
 
     @Option(name = "-t", usage = "number of threads")
     private int threads = 1;
@@ -35,7 +36,7 @@ public class Main {
     private String secretKey;
 
     @Option(name = "--endpointUrl", usage = "endpoint url")
-    private String endpointUrl = "s3.amazonaws.com";
+    private String endpointUrl = DEFAULT_S3_ENDPOINT;
 
     @Option(name = "--bucketName", usage = "name of bucket")
     private String bucketName;
@@ -49,11 +50,11 @@ public class Main {
     @Option(name = "--gzip", usage = "use gzip")
     private boolean useGzip = false;
 
+    @Option(name = "--useOldS3Signer", usage = "use old S3 Signer; currently required for Ceph / radosgw because it lacks support for SigV4 signing")
+    private boolean useOldS3Signer = false;
+
     public static void main(String... args) throws IOException {
         Locale.setDefault(Locale.ENGLISH);
-
-        // register "old" signer because Ceph / radosgw does not support SigV4 signing
-        SignerFactory.registerSigner("S3Signer", S3Signer.class);
 
         new Main().run(args);
     }
@@ -74,6 +75,10 @@ public class Main {
             return;
         }
 
+        if (useOldS3Signer) {
+            SignerFactory.registerSigner("S3Signer", S3Signer.class);
+        }
+
         StopWatch stopWatch = new StopWatch();
 
         stopWatch.start();
@@ -88,7 +93,8 @@ public class Main {
                 n,
                 size,
                 useHttp,
-                useGzip
+                useGzip,
+                useOldS3Signer
         ).run();
 
         stopWatch.stop();

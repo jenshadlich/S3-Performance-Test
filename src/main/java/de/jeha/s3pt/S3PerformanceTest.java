@@ -31,17 +31,25 @@ public class S3PerformanceTest implements Runnable {
     private final int size;
     private final boolean useHttp;
     private final boolean useGzip;
+    private final boolean useOldS3Signer;
 
     /**
-     * @param accessKey   access key
-     * @param secretKey   secret key
-     * @param endpointUrl endpoint url
-     * @param bucketName  bucket name
-     * @param n           number of operations
-     * @param size        size for upload operations
+     *
+     * @param accessKey
+     * @param secretKey
+     * @param endpointUrl
+     * @param bucketName
+     * @param operation
+     * @param threads
+     * @param n
+     * @param size
+     * @param useHttp
+     * @param useGzip
+     * @param useOldS3Signer
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
-                             Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip) {
+                             Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip,
+                             boolean useOldS3Signer) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
@@ -52,6 +60,7 @@ public class S3PerformanceTest implements Runnable {
         this.size = size;
         this.useHttp = useHttp;
         this.useGzip = useGzip;
+        this.useOldS3Signer = useOldS3Signer;
     }
 
     @Override
@@ -61,9 +70,11 @@ public class S3PerformanceTest implements Runnable {
         ClientConfiguration clientConfig = new ClientConfiguration()
                 .withProtocol(useHttp ? Protocol.HTTP : Protocol.HTTPS)
                 .withUserAgent("s3pt")
-                .withGzip(useGzip)
-                .withSignerOverride("S3Signer");
-        new ClientConfiguration().withSignerOverride("S3Signer");
+                .withGzip(useGzip);
+
+        if (useOldS3Signer) {
+            clientConfig.setSignerOverride("S3Signer");
+        }
 
         AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfig);
         s3Client.setEndpoint(endpointUrl);
