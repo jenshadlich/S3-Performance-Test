@@ -20,13 +20,13 @@ public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final String DEFAULT_S3_ENDPOINT = "s3.amazonaws.com";
 
-    @Option(name = "-t", usage = "number of threads")
+    @Option(name = "-t", aliases = {"--threads"}, usage = "number of threads")
     private int threads = 1;
 
-    @Option(name = "-n", usage = "number of operations", required = true)
+    @Option(name = "-n", aliases = {"--number"}, usage = "number of operations", required = true)
     private int n;
 
-    @Option(name = "--size", usage = "number of files")
+    @Option(name = "--size", usage = "file size (e.g. for UPLOAD)")
     private int size = 128 * 1024; // 128 kb
 
     @Option(name = "--accessKey", usage = "access key ID", required = true)
