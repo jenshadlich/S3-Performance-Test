@@ -52,6 +52,9 @@ public class ClearBucket extends AbstractOperation {
                 if (deleted >= n) {
                     break;
                 }
+                if (deleted % 1000 == 0) {
+                    LOG.info("Files deleted: {}", deleted);
+                }
             }
         } while (truncated && deleted < n);
 
