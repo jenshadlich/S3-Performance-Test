@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -30,10 +33,10 @@ public class Main {
     @Option(name = "--size", usage = "file size (e.g. for UPLOAD); supported units: B, K, M", handler = IntFromByteUnitOptionHandler.class)
     private int size = 64 * 1024; // 64K
 
-    @Option(name = "--accessKey", usage = "access key ID", required = true)
+    @Option(name = "--accessKey", usage = "access key ID; also possible to set AWS_ACCESS_KEY int environment", required = true)
     private String accessKey;
 
-    @Option(name = "--secretKey", usage = "secret access key", required = true)
+    @Option(name = "--secretKey", usage = "secret access key; also possible to set AWS_SECRET_KEY in environment", required = true)
     private String secretKey;
 
     @Option(name = "--endpointUrl", usage = "endpoint url")
@@ -57,17 +60,26 @@ public class Main {
     @Option(name = "--keepAlive", usage = "use TCP keep alive")
     private boolean useKeepAlive = false;
 
+    private final List<String> commandLineArguments = new ArrayList<>();
+
     public static void main(String... args) throws IOException {
         Locale.setDefault(Locale.ENGLISH);
 
-        new Main().run(args);
+        new Main(args).run();
     }
 
-    private void run(String... args) throws IOException {
+    public Main(String... args) {
+        commandLineArguments.addAll(Arrays.asList(args));
+    }
+
+    private void run() throws IOException {
         CmdLineParser parser = new CmdLineParser(this);
 
         try {
-            parser.parseArgument(args);
+            addArgumentsFromEnvironment("--accessKey", "AWS_ACCESS_KEY");
+            addArgumentsFromEnvironment("--secretKey", "AWS_SECRET_KEY");
+
+            parser.parseArgument(commandLineArguments);
 
         } catch (CmdLineException e) {
 
@@ -105,6 +117,25 @@ public class Main {
         stopWatch.stop();
 
         LOG.info("Total time = {} ms", stopWatch.getTime());
+    }
+
+    private void addArgumentsFromEnvironment(String commandLineKey, String environmentKey) {
+        String value = System.getenv(environmentKey);
+        if (value != null) {
+            boolean override = false;
+            for (String arg : commandLineArguments) {
+                if (commandLineKey.equals(arg)) {
+                    LOG.info("Ignore environment valuecle for {}. Use value supplied by {} (override).", environmentKey, commandLineKey);
+                    override = true;
+                    break;
+                }
+            }
+            if (!override) {
+                LOG.info("Use environment value for {}.", environmentKey);
+                commandLineArguments.add(commandLineKey);
+                commandLineArguments.add(value);
+            }
+        }
     }
 
 }
