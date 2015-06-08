@@ -28,10 +28,11 @@ java -jar s3pt.jar [options...]
  --endpointUrl VAL : endpoint url (default: s3.amazonaws.com)
  --gzip            : use gzip (default: false)
  --http            : use http instead of https (default: false)
+ --keepAlive       : use TCP keep alive (default: false)
  --operation VAL   : operation (default: UPLOAD)
  --secretKey VAL   : secret access key
  --size N          : file size (e.g. for UPLOAD); supported units: B, K, M
-                     (default: 131072)
+                     (default: 65536)
  --useOldS3Signer  : use old S3 Signer; currently required for Ceph / radosgw
                      because it lacks support for SigV4 signing (default: false)
  -n (--number) N   : number of operations

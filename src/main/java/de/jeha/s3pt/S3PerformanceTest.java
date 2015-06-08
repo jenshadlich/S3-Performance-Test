@@ -32,9 +32,9 @@ public class S3PerformanceTest implements Runnable {
     private final boolean useHttp;
     private final boolean useGzip;
     private final boolean useOldS3Signer;
+    private final boolean useKeepAlive;
 
     /**
-     *
      * @param accessKey
      * @param secretKey
      * @param endpointUrl
@@ -46,10 +46,11 @@ public class S3PerformanceTest implements Runnable {
      * @param useHttp
      * @param useGzip
      * @param useOldS3Signer
+     * @param useKeepAlive
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
                              Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip,
-                             boolean useOldS3Signer) {
+                             boolean useOldS3Signer, boolean useKeepAlive) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
@@ -61,6 +62,7 @@ public class S3PerformanceTest implements Runnable {
         this.useHttp = useHttp;
         this.useGzip = useGzip;
         this.useOldS3Signer = useOldS3Signer;
+        this.useKeepAlive = useKeepAlive;
     }
 
     @Override
@@ -70,7 +72,8 @@ public class S3PerformanceTest implements Runnable {
         ClientConfiguration clientConfig = new ClientConfiguration()
                 .withProtocol(useHttp ? Protocol.HTTP : Protocol.HTTPS)
                 .withUserAgent("s3pt")
-                .withGzip(useGzip);
+                .withGzip(useGzip)
+                .withTcpKeepAlive(useKeepAlive);
 
         if (useOldS3Signer) {
             clientConfig.setSignerOverride("S3Signer");

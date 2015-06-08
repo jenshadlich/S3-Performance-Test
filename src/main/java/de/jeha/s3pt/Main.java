@@ -54,6 +54,9 @@ public class Main {
     @Option(name = "--useOldS3Signer", usage = "use old S3 Signer; currently required for Ceph / radosgw because it lacks support for SigV4 signing")
     private boolean useOldS3Signer = false;
 
+    @Option(name = "--keepAlive", usage = "use TCP keep alive")
+    private boolean useKeepAlive = false;
+
     public static void main(String... args) throws IOException {
         Locale.setDefault(Locale.ENGLISH);
 
@@ -95,7 +98,8 @@ public class Main {
                 size,
                 useHttp,
                 useGzip,
-                useOldS3Signer
+                useOldS3Signer,
+                useKeepAlive
         ).run();
 
         stopWatch.stop();
