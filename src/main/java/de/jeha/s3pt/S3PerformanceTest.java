@@ -35,18 +35,18 @@ public class S3PerformanceTest implements Runnable {
     private final boolean useKeepAlive;
 
     /**
-     * @param accessKey
-     * @param secretKey
-     * @param endpointUrl
-     * @param bucketName
-     * @param operation
-     * @param threads
-     * @param n
-     * @param size
-     * @param useHttp
-     * @param useGzip
-     * @param useOldS3Signer
-     * @param useKeepAlive
+     * @param accessKey      access key
+     * @param secretKey      secret key
+     * @param endpointUrl    endpoint url, e.g. 's3.amazonaws.com'
+     * @param bucketName     name of bucket
+     * @param operation      operation
+     * @param threads        number of threads
+     * @param n              number of operations
+     * @param size           size (if applicable), e.g. for UPLOAD operation
+     * @param useHttp        switch to HTTP when
+     * @param useGzip        enable GZIP compression
+     * @param useOldS3Signer use "old" S3Signer for endpoints that do not support v4 signing
+     * @param useKeepAlive   use TCP keep alive
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
                              Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip,
