@@ -13,7 +13,7 @@ public enum Operation {
 
     private final boolean multiThreaded;
 
-    Operation(boolean multiThreaded) {
+    private Operation(boolean multiThreaded) {
         this.multiThreaded = multiThreaded;
     }
 
