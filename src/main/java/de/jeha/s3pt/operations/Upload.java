@@ -33,7 +33,6 @@ public class Upload extends AbstractOperation {
 
     @Override
     public OperationResult call() {
-
         LOG.info("Upload: n={}, size={} byte", n, size);
 
         final byte data[] = RandomDataGenerator.generate(size);
