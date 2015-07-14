@@ -56,6 +56,10 @@ public class Upload extends AbstractOperation {
 
             LOG.debug("Time = {} ms", stopWatch.getTime());
             getStats().addValue(stopWatch.getTime());
+
+            if (i % 1000 == 0) {
+                LOG.info("Progress: {} of {}", i, n);
+            }
         }
 
         return new OperationResult(getStats());
