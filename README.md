@@ -1,5 +1,5 @@
 # S3 Performance Test Tool
-Performance test tool for Amazon S3 or S3-compatible object storage like Ceph with radosgw.
+Performance test tool for Amazon S3 or S3-compatible object storage systems like Ceph with radosgw.
 
 ##### Build:
 (requires Java 8 or higher)
