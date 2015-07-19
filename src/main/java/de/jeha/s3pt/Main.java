@@ -125,7 +125,7 @@ public class Main {
             boolean override = false;
             for (String arg : commandLineArguments) {
                 if (commandLineKey.equals(arg)) {
-                    LOG.info("Ignore environment valuecle for {}. Use value supplied by {} (override).", environmentKey, commandLineKey);
+                    LOG.info("Ignore environment value for {}. Use value supplied by {} (override).", environmentKey, commandLineKey);
                     override = true;
                     break;
                 }
