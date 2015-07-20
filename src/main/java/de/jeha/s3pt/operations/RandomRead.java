@@ -35,7 +35,7 @@ public class RandomRead extends AbstractOperation {
     public OperationResult call() {
         LOG.info("Random read: n={}", n);
 
-        LOG.info("Collect files for test");
+        LOG.info("Collect objects for test");
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -52,13 +52,13 @@ public class RandomRead extends AbstractOperation {
 
         LOG.info("Time = {} ms", stopWatch.getTime());
 
-        LOG.info("Files read for test: {}", filesRead);
+        LOG.info("Objects read for test: {}", filesRead);
 
         for (int i = 0; i < n; i++) {
             final String randomKey = (filesRead == 1)
                     ? files.get(0)
                     : files.get(GENERATOR.nextInt(files.size() - 1));
-            LOG.debug("Read file: {}", randomKey);
+            LOG.debug("Read object: {}", randomKey);
 
             stopWatch = new StopWatch();
             stopWatch.start();
