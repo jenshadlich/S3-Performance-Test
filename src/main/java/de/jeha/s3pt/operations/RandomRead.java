@@ -41,8 +41,8 @@ public class RandomRead extends AbstractOperation {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        int filesRead = 0;
-        Map<Integer, String> files = new HashMap<>();
+        int objectsRead = 0;
+        Map<Integer, String> objects = new HashMap<>();
         //Set<String> keys = new HashSet<>();
 
         boolean truncated;
@@ -58,23 +58,23 @@ public class RandomRead extends AbstractOperation {
 
             for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
                 //keys.add(objectSummary.getKey());
-                files.put(filesRead, objectSummary.getKey());
-                filesRead++;
+                objects.put(objectsRead, objectSummary.getKey());
+                objectsRead++;
             }
 
-        } while (truncated && filesRead < 100000);
+        } while (truncated && objectsRead < 100000);
 
         stopWatch.stop();
 
         LOG.info("Time = {} ms", stopWatch.getTime());
 
-        LOG.info("Objects read for test: {}, files available: {}", filesRead, files.size());
+        LOG.info("Objects read for test: {}, files available: {}", objectsRead, objects.size());
         //LOG.info("Distinct keys: {}", keys.size());
 
         for (int i = 0; i < n; i++) {
-            final String randomKey = (filesRead == 1)
-                    ? files.get(0)
-                    : files.get(GENERATOR.nextInt(files.size() - 1));
+            final String randomKey = (objectsRead == 1)
+                    ? objects.get(0)
+                    : objects.get(GENERATOR.nextInt(objects.size() - 1));
             LOG.debug("Read object: {}", randomKey);
 
             stopWatch = new StopWatch();
