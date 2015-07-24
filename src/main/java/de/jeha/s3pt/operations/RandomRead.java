@@ -1,6 +1,7 @@
 package de.jeha.s3pt.operations;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import de.jeha.s3pt.OperationResult;
@@ -42,17 +43,33 @@ public class RandomRead extends AbstractOperation {
 
         int filesRead = 0;
         Map<Integer, String> files = new HashMap<>();
-        // this should give a thousand objects
-        // TODO: make it explicit and support pagination
-        for (S3ObjectSummary objectSummary : s3Client.listObjects(bucketName).getObjectSummaries()) {
-            files.put(filesRead, objectSummary.getKey());
-            filesRead++;
-        }
+        //Set<String> keys = new HashSet<>();
+
+        boolean truncated;
+        ObjectListing previousObjectListing = null;
+        do {
+            ObjectListing objectListing = (previousObjectListing != null)
+                    ? s3Client.listNextBatchOfObjects(previousObjectListing)
+                    : s3Client.listObjects(bucketName);
+            previousObjectListing = objectListing;
+            truncated = objectListing.isTruncated();
+
+            LOG.debug("Loaded {} objects", objectListing.getObjectSummaries().size());
+
+            for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+                //keys.add(objectSummary.getKey());
+                files.put(filesRead, objectSummary.getKey());
+                filesRead++;
+            }
+
+        } while (truncated && filesRead < 100000);
+
         stopWatch.stop();
 
         LOG.info("Time = {} ms", stopWatch.getTime());
 
-        LOG.info("Objects read for test: {}", filesRead);
+        LOG.info("Objects read for test: {}, files available: {}", filesRead, files.size());
+        //LOG.info("Distinct keys: {}", keys.size());
 
         for (int i = 0; i < n; i++) {
             final String randomKey = (filesRead == 1)
