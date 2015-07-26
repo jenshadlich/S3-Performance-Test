@@ -3,9 +3,9 @@ package de.jeha.s3pt.operations;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import de.jeha.s3pt.OperationResult;
-import de.jeha.s3pt.operations.data.FileObjectKeysDataProvider;
 import de.jeha.s3pt.operations.data.ObjectKeys;
 import de.jeha.s3pt.operations.data.S3ObjectKeysDataProvider;
+import de.jeha.s3pt.operations.data.SingletonFileObjectKeysDataProvider;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class RandomRead extends AbstractOperation {
         if (keyFileName == null) {
             objectKeys = new S3ObjectKeysDataProvider(s3Client, bucketName).get();
         } else {
-            objectKeys = new FileObjectKeysDataProvider(keyFileName).get();
+            objectKeys = new SingletonFileObjectKeysDataProvider(keyFileName).get();
         }
         StopWatch stopWatch = new StopWatch();
 
