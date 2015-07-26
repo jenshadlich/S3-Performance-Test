@@ -59,6 +59,9 @@ public class CreateKeyFile extends AbstractOperation {
                 FileUtils.writeStringToFile(keyFile, objectSummary.getKey(), true);
                 FileUtils.writeStringToFile(keyFile, System.lineSeparator(), true);
                 objectsRead++;
+                if (objectsRead >= n) {
+                    break;
+                }
             }
 
             LOG.info("Progress: {} of {}", objectsRead, n);
