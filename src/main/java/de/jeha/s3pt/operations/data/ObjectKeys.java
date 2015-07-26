@@ -11,7 +11,7 @@ public class ObjectKeys {
 
     private final static Random GENERATOR = new Random();
 
-    private Map<Integer, String> objectKeys = new HashMap<>();
+    private final Map<Integer, String> objectKeys = new HashMap<>();
 
     public void add(String key) {
         int sizeBefore = objectKeys.size(); // 0-based
