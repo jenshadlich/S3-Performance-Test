@@ -27,7 +27,7 @@ public class S3ObjectKeysDataProvider implements DataProvider<ObjectKeys> {
         int objectsRead = 0;
         ObjectKeys objectKeys = new ObjectKeys();
 
-        LOG.info("Collect objects for test");
+        LOG.info("Collect object keys");
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -53,7 +53,7 @@ public class S3ObjectKeysDataProvider implements DataProvider<ObjectKeys> {
         stopWatch.stop();
 
         LOG.info("Time = {} ms", stopWatch.getTime());
-        LOG.info("Objects read: {}, files available: {}", objectsRead, objectKeys.size());
+        LOG.info("Objects read: {}, object keys available: {}", objectsRead, objectKeys.size());
 
         return objectKeys;
     }

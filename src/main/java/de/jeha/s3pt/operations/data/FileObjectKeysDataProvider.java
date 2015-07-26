@@ -26,7 +26,7 @@ public class FileObjectKeysDataProvider implements DataProvider<ObjectKeys> {
     @Override
     public ObjectKeys get() {
 
-        LOG.info("Collect objects for test");
+        LOG.info("Collect object keys");
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -40,7 +40,7 @@ public class FileObjectKeysDataProvider implements DataProvider<ObjectKeys> {
         stopWatch.stop();
 
         LOG.info("Time = {} ms", stopWatch.getTime());
-        LOG.info("Objects read: {}", objectKeys.size());
+        LOG.info("Object keys: {}", objectKeys.size());
 
         return objectKeys;
     }
