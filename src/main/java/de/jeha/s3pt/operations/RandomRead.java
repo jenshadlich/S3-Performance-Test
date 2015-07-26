@@ -3,6 +3,7 @@ package de.jeha.s3pt.operations;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import de.jeha.s3pt.OperationResult;
+import de.jeha.s3pt.operations.data.FileObjectKeysDataProvider;
 import de.jeha.s3pt.operations.data.ObjectKeys;
 import de.jeha.s3pt.operations.data.S3ObjectKeysDataProvider;
 import org.apache.commons.lang3.time.StopWatch;
@@ -21,18 +22,25 @@ public class RandomRead extends AbstractOperation {
     private final AmazonS3 s3Client;
     private final String bucketName;
     private final int n;
+    private final String keyFileName;
 
-    public RandomRead(AmazonS3 s3Client, String bucketName, int n) {
+    public RandomRead(AmazonS3 s3Client, String bucketName, int n, String keyFileName) {
         this.s3Client = s3Client;
         this.bucketName = bucketName;
         this.n = n;
+        this.keyFileName = keyFileName;
     }
 
     @Override
     public OperationResult call() {
         LOG.info("Random read: n={}", n);
 
-        ObjectKeys objectKeys = new S3ObjectKeysDataProvider(s3Client, bucketName).get();
+        final ObjectKeys objectKeys;
+        if (keyFileName == null) {
+            objectKeys = new S3ObjectKeysDataProvider(s3Client, bucketName).get();
+        } else {
+            objectKeys = new FileObjectKeysDataProvider(keyFileName).get();
+        }
         StopWatch stopWatch = new StopWatch();
 
         for (int i = 0; i < n; i++) {
