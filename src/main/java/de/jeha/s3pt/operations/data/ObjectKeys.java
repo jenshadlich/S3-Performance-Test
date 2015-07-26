@@ -22,6 +22,10 @@ public class ObjectKeys {
         return objectKeys.size();
     }
 
+    public String get(Integer index) {
+        return objectKeys.get(index);
+    }
+
     public String getRandom() {
         if (objectKeys.size() == 0) {
             return null;

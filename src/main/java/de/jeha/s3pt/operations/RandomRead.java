@@ -1,18 +1,15 @@
 package de.jeha.s3pt.operations;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import de.jeha.s3pt.OperationResult;
+import de.jeha.s3pt.operations.data.ObjectKeys;
+import de.jeha.s3pt.operations.data.S3ObjectKeysDataProvider;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 /**
  * @author jenshadlich@googlemail.com
@@ -20,7 +17,6 @@ import java.util.Random;
 public class RandomRead extends AbstractOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(RandomRead.class);
-    private final static Random GENERATOR = new Random();
 
     private final AmazonS3 s3Client;
     private final String bucketName;
@@ -36,48 +32,14 @@ public class RandomRead extends AbstractOperation {
     public OperationResult call() {
         LOG.info("Random read: n={}", n);
 
-        LOG.info("Collect objects for test");
-
+        ObjectKeys objectKeys = new S3ObjectKeysDataProvider(s3Client, bucketName).get();
         StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
-        int objectsRead = 0;
-        Map<Integer, String> objects = new HashMap<>();
-        //Set<String> keys = new HashSet<>();
-
-        boolean truncated;
-        ObjectListing previousObjectListing = null;
-        do {
-            ObjectListing objectListing = (previousObjectListing != null)
-                    ? s3Client.listNextBatchOfObjects(previousObjectListing)
-                    : s3Client.listObjects(bucketName);
-            previousObjectListing = objectListing;
-            truncated = objectListing.isTruncated();
-
-            LOG.debug("Loaded {} objects", objectListing.getObjectSummaries().size());
-
-            for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-                //keys.add(objectSummary.getKey());
-                objects.put(objectsRead, objectSummary.getKey());
-                objectsRead++;
-            }
-
-        } while (truncated && objectsRead < 100000);
-
-        stopWatch.stop();
-
-        LOG.info("Time = {} ms", stopWatch.getTime());
-
-        LOG.info("Objects read for test: {}, files available: {}", objectsRead, objects.size());
-        //LOG.info("Distinct keys: {}", keys.size());
 
         for (int i = 0; i < n; i++) {
-            final String randomKey = (objectsRead == 1)
-                    ? objects.get(0)
-                    : objects.get(GENERATOR.nextInt(objects.size() - 1));
+            final String randomKey = objectKeys.getRandom();
             LOG.debug("Read object: {}", randomKey);
 
-            stopWatch = new StopWatch();
+            stopWatch.reset();
             stopWatch.start();
 
             S3Object object = s3Client.getObject(bucketName, randomKey);
