@@ -23,6 +23,7 @@ public class Main {
 
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final String DEFAULT_S3_ENDPOINT = "s3.amazonaws.com";
+    private static final String DEFAULT_KEY_FILE_NAME = "keys.txt";
 
     @Option(name = "-t", aliases = {"--threads"}, usage = "number of threads")
     private int threads = 1;
@@ -59,6 +60,9 @@ public class Main {
 
     @Option(name = "--keepAlive", usage = "use TCP keep alive")
     private boolean useKeepAlive = false;
+
+    @Option(name = "--keyFileName", usage = "name of file with object keys")
+    private String keyFileName = DEFAULT_KEY_FILE_NAME;
 
     private final List<String> commandLineArguments = new ArrayList<>();
 
@@ -111,7 +115,8 @@ public class Main {
                 useHttp,
                 useGzip,
                 useOldS3Signer,
-                useKeepAlive
+                useKeepAlive,
+                keyFileName
         ).run();
 
         stopWatch.stop();

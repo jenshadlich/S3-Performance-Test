@@ -33,6 +33,7 @@ public class S3PerformanceTest implements Runnable {
     private final boolean useGzip;
     private final boolean useOldS3Signer;
     private final boolean useKeepAlive;
+    private final String keyFileName;
 
     /**
      * @param accessKey      access key
@@ -50,7 +51,7 @@ public class S3PerformanceTest implements Runnable {
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
                              Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip,
-                             boolean useOldS3Signer, boolean useKeepAlive) {
+                             boolean useOldS3Signer, boolean useKeepAlive, String keyFileName) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
@@ -63,6 +64,7 @@ public class S3PerformanceTest implements Runnable {
         this.useGzip = useGzip;
         this.useOldS3Signer = useOldS3Signer;
         this.useKeepAlive = useKeepAlive;
+        this.keyFileName = keyFileName;
     }
 
     @Override
@@ -121,6 +123,8 @@ public class S3PerformanceTest implements Runnable {
                 return new ClearBucket(s3Client, bucketName, n);
             case CREATE_BUCKET:
                 return new CreateBucket(s3Client, bucketName);
+            case CREATE_KEY_FILE:
+                return new CreateKeyFile(s3Client, bucketName, n, keyFileName);
             case RANDOM_READ:
                 return new RandomRead(s3Client, bucketName, n);
             case RANDOM_READ_METADATA:
