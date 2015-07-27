@@ -128,7 +128,7 @@ public class S3PerformanceTest implements Runnable {
             case RANDOM_READ:
                 return new RandomRead(s3Client, bucketName, n, keyFileName);
             case RANDOM_READ_METADATA:
-                return new RandomReadMetadata(s3Client, bucketName, n);
+                return new RandomReadMetadata(s3Client, bucketName, n, keyFileName);
             case UPLOAD:
                 return new Upload(s3Client, bucketName, n, size);
             case UPLOAD_AND_READ:
