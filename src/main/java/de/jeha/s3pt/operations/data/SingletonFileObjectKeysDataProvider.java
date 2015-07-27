@@ -10,8 +10,9 @@ public class SingletonFileObjectKeysDataProvider implements DataProvider<ObjectK
 
     private static final Logger LOG = LoggerFactory.getLogger(SingletonFileObjectKeysDataProvider.class);
 
-    private final String fileName;
     private static ObjectKeys OBJECT_KEYS = null;
+
+    private final String fileName;
 
     public SingletonFileObjectKeysDataProvider(String fileName) {
         this.fileName = fileName;
