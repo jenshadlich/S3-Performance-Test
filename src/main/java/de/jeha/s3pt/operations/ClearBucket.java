@@ -36,7 +36,7 @@ public class ClearBucket extends AbstractOperation {
             truncated = objectListing.isTruncated();
 
             for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-                LOG.debug("Delete file: {}, #deleted {}", objectSummary.getKey(), deleted);
+                LOG.debug("Delete object: {}, #deleted {}", objectSummary.getKey(), deleted);
 
                 StopWatch stopWatch = new StopWatch();
                 stopWatch.start();
@@ -53,12 +53,12 @@ public class ClearBucket extends AbstractOperation {
                     break;
                 }
                 if (deleted % 1000 == 0) {
-                    LOG.info("Files deleted so far: {}", deleted);
+                    LOG.info("Object deleted so far: {}", deleted);
                 }
             }
         } while (truncated && deleted < n);
 
-        LOG.info("Files deleted: {}", deleted);
+        LOG.info("Object deleted: {}", deleted);
 
         return new OperationResult(getStats());
     }
