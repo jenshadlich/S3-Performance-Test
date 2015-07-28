@@ -35,11 +35,10 @@ public class Upload extends AbstractOperation {
     public OperationResult call() {
         LOG.info("Upload: n={}, size={} byte", n, size);
 
-        final byte data[] = RandomDataGenerator.generate(size);
-
         for (int i = 0; i < n; i++) {
+            final byte data[] = RandomDataGenerator.generate(size);
             final String key = UUID.randomUUID().toString();
-            LOG.debug("Uploading file: {}", key);
+            LOG.debug("Uploading object: {}", key);
 
             final ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(data.length);
