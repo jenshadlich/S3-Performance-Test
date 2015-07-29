@@ -48,6 +48,7 @@ public class S3PerformanceTest implements Runnable {
      * @param useGzip        enable GZIP compression
      * @param useOldS3Signer use "old" S3Signer for endpoints that do not support v4 signing
      * @param useKeepAlive   use TCP keep alive
+     * @param keyFileName    name of file with object keys
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
                              Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip,
