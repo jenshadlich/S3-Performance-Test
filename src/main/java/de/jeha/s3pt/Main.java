@@ -32,7 +32,7 @@ public class Main {
     private int n;
 
     @Option(name = "--size", usage = "file size (e.g. for UPLOAD); supported units: B, K, M", handler = IntFromByteUnitOptionHandler.class)
-    private int size = 64 * 1024; // 64K
+    private int size = 128 * 1024; // 128K
 
     @Option(name = "--accessKey", usage = "access key ID; also possible to set AWS_ACCESS_KEY int environment", required = true)
     private String accessKey;
