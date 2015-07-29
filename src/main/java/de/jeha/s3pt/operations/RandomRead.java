@@ -20,13 +20,13 @@ public class RandomRead extends AbstractOperation {
     private static final Logger LOG = LoggerFactory.getLogger(RandomRead.class);
 
     private final AmazonS3 s3Client;
-    private final String bucketName;
+    private final String bucket;
     private final int n;
     private final String keyFileName;
 
-    public RandomRead(AmazonS3 s3Client, String bucketName, int n, String keyFileName) {
+    public RandomRead(AmazonS3 s3Client, String bucket, int n, String keyFileName) {
         this.s3Client = s3Client;
-        this.bucketName = bucketName;
+        this.bucket = bucket;
         this.n = n;
         this.keyFileName = keyFileName;
     }
@@ -37,7 +37,7 @@ public class RandomRead extends AbstractOperation {
 
         final ObjectKeys objectKeys;
         if (keyFileName == null) {
-            objectKeys = new S3ObjectKeysDataProvider(s3Client, bucketName).get();
+            objectKeys = new S3ObjectKeysDataProvider(s3Client, bucket).get();
         } else {
             objectKeys = new SingletonFileObjectKeysDataProvider(keyFileName).get();
         }
@@ -50,7 +50,7 @@ public class RandomRead extends AbstractOperation {
             stopWatch.reset();
             stopWatch.start();
 
-            S3Object object = s3Client.getObject(bucketName, randomKey);
+            S3Object object = s3Client.getObject(bucket, randomKey);
             try {
                 object.close();
             } catch (IOException e) {

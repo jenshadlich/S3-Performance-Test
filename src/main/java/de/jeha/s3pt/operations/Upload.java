@@ -20,13 +20,13 @@ public class Upload extends AbstractOperation {
     private final static Logger LOG = LoggerFactory.getLogger(Upload.class);
 
     private final AmazonS3 s3Client;
-    private final String bucketName;
+    private final String bucket;
     private final int n;
     private final int size;
 
-    public Upload(AmazonS3 s3Client, String bucketName, int n, int size) {
+    public Upload(AmazonS3 s3Client, String bucket, int n, int size) {
         this.s3Client = s3Client;
-        this.bucketName = bucketName;
+        this.bucket = bucket;
         this.n = n;
         this.size = size;
     }
@@ -44,7 +44,7 @@ public class Upload extends AbstractOperation {
             objectMetadata.setContentLength(data.length);
 
             PutObjectRequest putObjectRequest =
-                    new PutObjectRequest(bucketName, key, new ByteArrayInputStream(data), objectMetadata);
+                    new PutObjectRequest(bucket, key, new ByteArrayInputStream(data), objectMetadata);
 
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();

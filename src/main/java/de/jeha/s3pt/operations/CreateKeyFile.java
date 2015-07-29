@@ -20,13 +20,13 @@ public class CreateKeyFile extends AbstractOperation {
     private static final Logger LOG = LoggerFactory.getLogger(CreateKeyFile.class);
 
     private final AmazonS3 s3Client;
-    private final String bucketName;
+    private final String bucket;
     private final int n;
     private final String keyFileName;
 
-    public CreateKeyFile(AmazonS3 s3Client, String bucketName, int n, String keyFileName) {
+    public CreateKeyFile(AmazonS3 s3Client, String bucket, int n, String keyFileName) {
         this.s3Client = s3Client;
-        this.bucketName = bucketName;
+        this.bucket = bucket;
         this.n = n;
         this.keyFileName = keyFileName;
     }
@@ -49,7 +49,7 @@ public class CreateKeyFile extends AbstractOperation {
         do {
             ObjectListing objectListing = (previousObjectListing != null)
                     ? s3Client.listNextBatchOfObjects(previousObjectListing)
-                    : s3Client.listObjects(bucketName);
+                    : s3Client.listObjects(bucket);
             previousObjectListing = objectListing;
             truncated = objectListing.isTruncated();
 

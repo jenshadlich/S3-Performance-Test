@@ -14,11 +14,11 @@ public class CreateBucket extends AbstractOperation {
     private static final Logger LOG = LoggerFactory.getLogger(CreateBucket.class);
 
     private final AmazonS3 s3Client;
-    private final String bucketName;
+    private final String bucket;
 
-    public CreateBucket(AmazonS3 s3Client, String bucketName) {
+    public CreateBucket(AmazonS3 s3Client, String bucket) {
         this.s3Client = s3Client;
-        this.bucketName = bucketName;
+        this.bucket = bucket;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class CreateBucket extends AbstractOperation {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        s3Client.createBucket(bucketName);
+        s3Client.createBucket(bucket);
 
         stopWatch.stop();
 
