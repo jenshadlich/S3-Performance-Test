@@ -15,11 +15,11 @@ public class S3ObjectKeysDataProvider implements DataProvider<ObjectKeys> {
     private static final Logger LOG = LoggerFactory.getLogger(S3ObjectKeysDataProvider.class);
 
     private final AmazonS3 s3Client;
-    private final String bucketName;
+    private final String bucket;
 
-    public S3ObjectKeysDataProvider(AmazonS3 s3Client, String bucketName) {
+    public S3ObjectKeysDataProvider(AmazonS3 s3Client, String bucket) {
         this.s3Client = s3Client;
-        this.bucketName = bucketName;
+        this.bucket = bucket;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class S3ObjectKeysDataProvider implements DataProvider<ObjectKeys> {
         do {
             ObjectListing objectListing = (previousObjectListing != null)
                     ? s3Client.listNextBatchOfObjects(previousObjectListing)
-                    : s3Client.listObjects(bucketName);
+                    : s3Client.listObjects(bucket);
             previousObjectListing = objectListing;
             truncated = objectListing.isTruncated();
 
