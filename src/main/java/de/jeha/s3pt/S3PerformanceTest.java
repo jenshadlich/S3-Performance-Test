@@ -79,7 +79,7 @@ public class S3PerformanceTest implements Runnable {
                 .withTcpKeepAlive(useKeepAlive);
 
         if (useOldS3Signer) {
-            clientConfig.setSignerOverride("S3Signer");
+            clientConfig.setSignerOverride(Constants.S3_SIGNER);
         }
 
         AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfig);
