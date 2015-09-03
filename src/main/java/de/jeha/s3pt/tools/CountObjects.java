@@ -28,8 +28,7 @@ public class CountObjects {
     public static void main(String... args) throws IOException {
         Locale.setDefault(Locale.ENGLISH);
 
-        Properties userProperties = UserProperties.read("s3pt");
-
+        final Properties userProperties = UserProperties.fromHome().load("s3pt");
         final String accessKey = userProperties.getProperty("accessKey");
         final String secretKey = userProperties.getProperty("secretKey");
         final String endpoint = userProperties.getProperty("endpoint");
