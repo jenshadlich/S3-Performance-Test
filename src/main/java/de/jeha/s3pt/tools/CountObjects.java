@@ -51,27 +51,30 @@ public class CountObjects {
 
         LOG.info("Start: bucket '{}'", bucket);
 
-        boolean truncated;
+        boolean hasMoreResults;
         ObjectListing previousObjectListing = null;
         do {
-            chunks++;
-            System.out.print(".");
-            System.out.flush();
-            if (chunks % 100 == 0) {
-                System.out.println();
-            }
+            printProgress(++chunks);
 
             ObjectListing objectListing = (previousObjectListing != null)
                     ? s3Client.listNextBatchOfObjects(previousObjectListing)
                     : s3Client.listObjects(bucket);
             previousObjectListing = objectListing;
-            truncated = objectListing.isTruncated();
+            hasMoreResults = objectListing.isTruncated();
 
             objectCount += objectListing.getObjectSummaries().size();
-        } while (truncated);
+        } while (hasMoreResults);
 
         System.out.println();
         LOG.info("#objects: {}", objectCount);
+    }
+
+    private static void printProgress(int i) {
+        System.out.print(".");
+        System.out.flush();
+        if (i % 100 == 0) {
+            System.out.println();
+        }
     }
 
 }
