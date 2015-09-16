@@ -37,7 +37,7 @@
         <commons-lang3.version>3.4</commons-lang3.version>
         <commons-math3.version>3.5</commons-math3.version>
         <commons-io.version>2.4</commons-io.version>
-        <aws-java-sdk.version>1.10.17</aws-java-sdk.version>
+        <aws-java-sdk.version>1.10.18</aws-java-sdk.version>
         <!-- plugin versions -->
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
