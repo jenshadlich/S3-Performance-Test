@@ -23,28 +23,27 @@ public class Main {
 
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final String DEFAULT_S3_ENDPOINT = "s3.amazonaws.com";
-    private static final String DEFAULT_KEY_FILE_NAME = "keys.txt";
 
     @Option(name = "-t", aliases = {"--threads"}, usage = "number of threads")
     private int threads = 1;
 
     @Option(name = "-n", aliases = {"--number"}, usage = "number of operations", required = true)
-    private int n;
+    private int n = 1;
 
     @Option(name = "--size", usage = "file size (e.g. for UPLOAD); supported units: B, K, M", handler = IntFromByteUnitOptionHandler.class)
     private int size = 128 * 1024; // 128K
 
     @Option(name = "--accessKey", usage = "access key ID; also possible to set AWS_ACCESS_KEY int environment", required = true)
-    private String accessKey;
+    private String accessKey = null;
 
     @Option(name = "--secretKey", usage = "secret access key; also possible to set AWS_SECRET_KEY in environment", required = true)
-    private String secretKey;
+    private String secretKey = null;
 
     @Option(name = "--endpointUrl", usage = "endpoint url")
     private String endpointUrl = DEFAULT_S3_ENDPOINT;
 
     @Option(name = "--bucketName", usage = "name of bucket")
-    private String bucketName;
+    private String bucketName = null;
 
     @Option(name = "--operation", usage = "operation")
     private String operation = Operation.UPLOAD.name();
@@ -62,7 +61,7 @@ public class Main {
     private boolean useKeepAlive = false;
 
     @Option(name = "--keyFileName", usage = "name of file with object keys")
-    private String keyFileName = DEFAULT_KEY_FILE_NAME;
+    private String keyFileName = null;
 
     private final List<String> commandLineArguments = new ArrayList<>();
 
@@ -84,6 +83,11 @@ public class Main {
             addArgumentsFromEnvironment("--secretKey", "AWS_SECRET_KEY");
 
             parser.parseArgument(commandLineArguments);
+
+            if (Operation.CREATE_KEY_FILE.name().equals(operation) && keyFileName == null) {
+                throw new CmdLineException(parser,
+                        new IllegalStateException("Operation CREATE_KEY_FILE requires a keyFileName"));
+            }
 
         } catch (CmdLineException e) {
 
