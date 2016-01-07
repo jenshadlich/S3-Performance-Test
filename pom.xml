@@ -5,7 +5,7 @@
     <artifactId>s3pt</artifactId>
     <name>S3 Performance Test</name>
     <packaging>jar</packaging>
-    <version>0.4</version>
+    <version>0.5-SNAPSHOT</version>
     <description>A tool to test the performance of Amazon S3 or S3-compatible object storage systems like Ceph with radosgw
     </description>
 
@@ -20,7 +20,7 @@
         <connection>scm:git:git://github.com/jenshadlich/S3-Performance-Test.git</connection>
         <developerConnection>scm:git:https://github.com/jenshadlich/S3-Performance-Test.git</developerConnection>
         <url>https://github.com/jenshadlich/S3-Performance-Test.git</url>
-        <tag>s3pt-0.4</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
