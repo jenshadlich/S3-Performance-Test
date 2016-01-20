@@ -23,6 +23,7 @@ public class Main {
 
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final String DEFAULT_S3_ENDPOINT = "s3.amazonaws.com";
+    private static final String KEY_FILE_NAME_MISSING_FOR_CREATE = "Operation CREATE_KEY_FILE requires a keyFileName";
 
     @Option(name = "-t", aliases = {"--threads"}, usage = "number of threads")
     private int threads = 1;
@@ -85,8 +86,7 @@ public class Main {
             parser.parseArgument(commandLineArguments);
 
             if (Operation.CREATE_KEY_FILE.name().equals(operation) && keyFileName == null) {
-                throw new CmdLineException(parser,
-                        new IllegalStateException("Operation CREATE_KEY_FILE requires a keyFileName"));
+                throw new CmdLineException(parser, new IllegalStateException(KEY_FILE_NAME_MISSING_FOR_CREATE));
             }
 
         } catch (CmdLineException e) {
