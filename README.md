@@ -1,4 +1,7 @@
 # S3 Performance Test Tool
+
+![build](https://api.travis-ci.org/jenshadlich/S3-Performance-Test.svg)
+
 Performance test tool for Amazon S3 or S3-compatible object storage systems like Ceph with radosgw.
 
 ##### Build:
