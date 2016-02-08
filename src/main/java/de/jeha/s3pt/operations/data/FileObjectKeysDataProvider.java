@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  * @author jenshadlich@googlemail.com
  */
-public class FileObjectKeysDataProvider implements DataProvider<ObjectKeys> {
+class FileObjectKeysDataProvider implements DataProvider<ObjectKeys> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileObjectKeysDataProvider.class);
 
