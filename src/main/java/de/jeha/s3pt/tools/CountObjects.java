@@ -34,12 +34,12 @@ public class CountObjects {
 
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 
-        ClientConfiguration clientConfig = new ClientConfiguration()
+        ClientConfiguration clientConfiguration = new ClientConfiguration()
                 .withProtocol(Protocol.HTTP)
                 .withUserAgent("CountObjects")
                 .withSignerOverride(Constants.S3_SIGNER_TYPE);
 
-        AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfig);
+        AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfiguration);
         s3Client.setEndpoint(endpoint);
 
         int objectCount = 0;
