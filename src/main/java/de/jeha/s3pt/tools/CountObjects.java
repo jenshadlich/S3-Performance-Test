@@ -4,10 +4,8 @@ import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.SignerFactory;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.internal.S3Signer;
 import com.amazonaws.services.s3.model.ObjectListing;
 import de.jeha.s3pt.Constants;
 import de.jeha.s3pt.utils.UserProperties;
@@ -34,14 +32,12 @@ public class CountObjects {
         final String endpoint = userProperties.getProperty("endpoint");
         final String bucket = "my-bucket";
 
-        SignerFactory.registerSigner(Constants.S3_SIGNER, S3Signer.class);
-
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 
         ClientConfiguration clientConfig = new ClientConfiguration()
                 .withProtocol(Protocol.HTTP)
                 .withUserAgent("CountObjects")
-                .withSignerOverride(Constants.S3_SIGNER);
+                .withSignerOverride(Constants.S3_SIGNER_TYPE);
 
         AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfig);
         s3Client.setEndpoint(endpoint);

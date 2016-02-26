@@ -5,6 +5,6 @@ package de.jeha.s3pt;
  */
 public class Constants {
 
-    public static final String S3_SIGNER = "S3Signer";
+    public static final String S3_SIGNER_TYPE = "S3SignerType";
 
 }

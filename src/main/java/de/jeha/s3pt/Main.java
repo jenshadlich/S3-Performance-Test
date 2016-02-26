@@ -99,10 +99,6 @@ public class Main {
             return;
         }
 
-        if (useOldS3Signer) {
-            SignerFactory.registerSigner(Constants.S3_SIGNER, S3Signer.class);
-        }
-
         StopWatch stopWatch = new StopWatch();
 
         stopWatch.start();
