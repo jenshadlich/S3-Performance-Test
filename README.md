@@ -26,22 +26,27 @@ java -jar target/s3pt.jar --accessKey <accessKey> --secretKey <secretKey> --buck
 
 ```
 java -jar s3pt.jar [options...]
- --accessKey VAL   : access key ID; also possible to set AWS_ACCESS_KEY int
-                     environment
- --bucketName VAL  : name of bucket
- --endpointUrl VAL : endpoint url (default: s3.amazonaws.com)
- --gzip            : use gzip (default: false)
- --http            : use http instead of https (default: false)
- --keepAlive       : use TCP keep alive (default: false)
- --operation VAL   : operation (default: UPLOAD)
- --secretKey VAL   : secret access key; also possible to set AWS_SECRET_KEY in
-                     environment
- --size N          : file size (e.g. for UPLOAD); supported units: B, K, M
-                     (default: 65536)
- --useOldS3Signer  : use old S3 Signer; currently required for Ceph / radosgw
-                     because it lacks support for SigV4 signing (default: false)
- -n (--number) N   : number of operations
- -t (--threads) N  : number of threads (default: 1)
+ --accessKey VAL      : access key ID; also possible to set AWS_ACCESS_KEY int
+                        environment
+ --bucketName VAL     : name of bucket
+ --endpointUrl VAL    : endpoint url (default: s3.amazonaws.com)
+ --gzip               : use gzip (default: false)
+ --http               : use http instead of https (default: false)
+ --keepAlive          : use TCP keep alive (default: false)
+ --keyFileName VAL    : name of file with object keys
+ --operation VAL      : operation (default: UPLOAD)
+ --secretKey VAL      : secret access key; also possible to set AWS_SECRET_KEY
+                        in environment
+ --size N             : file size (e.g. for UPLOAD); supported units: B, K, M
+                        (default: 131072)
+ --useOldS3Signer     : use old S3 Signer; currently required for Ceph /
+                        radosgw because it lacks support for SigV4 signing
+                        (default: false)
+ --usePathStyleAccess : use path-style access (instead of DNS-style) (default:
+                        false)
+ -n (--number) N      : number of operations
+ -t (--threads) N     : number of threads (default: 1)
+
 ```
 
 To print the usage information execute `java -jar target/s3pt.jar` on the command line.
