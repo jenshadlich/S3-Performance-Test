@@ -6,6 +6,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.S3ClientOptions;
 import de.jeha.s3pt.operations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ public class S3PerformanceTest implements Runnable {
     private final boolean useGzip;
     private final boolean useOldS3Signer;
     private final boolean useKeepAlive;
+    private final boolean usePathStyleAccess;
     private final String keyFileName;
 
     /**
@@ -52,7 +54,8 @@ public class S3PerformanceTest implements Runnable {
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
                              Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip,
-                             boolean useOldS3Signer, boolean useKeepAlive, String keyFileName) {
+                             boolean useOldS3Signer, boolean useKeepAlive, boolean usePathStyleAccess,
+                             String keyFileName) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
@@ -65,25 +68,13 @@ public class S3PerformanceTest implements Runnable {
         this.useGzip = useGzip;
         this.useOldS3Signer = useOldS3Signer;
         this.useKeepAlive = useKeepAlive;
+        this.usePathStyleAccess = usePathStyleAccess;
         this.keyFileName = keyFileName;
     }
 
     @Override
     public void run() {
-        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-
-        ClientConfiguration clientConfig = new ClientConfiguration()
-                .withProtocol(useHttp ? Protocol.HTTP : Protocol.HTTPS)
-                .withUserAgent("s3pt")
-                .withGzip(useGzip)
-                .withTcpKeepAlive(useKeepAlive);
-
-        if (useOldS3Signer) {
-            clientConfig.setSignerOverride(Constants.S3_SIGNER_TYPE);
-        }
-
-        AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfig);
-        s3Client.setEndpoint(endpointUrl);
+        AmazonS3 s3Client = buildS3Client();
 
         ExecutorService executorService = Executors.newFixedThreadPool(threads);
 
@@ -116,6 +107,26 @@ public class S3PerformanceTest implements Runnable {
         executorService.shutdown();
 
         LOG.info("Done");
+    }
+
+    private AmazonS3 buildS3Client() {
+        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+
+        ClientConfiguration clientConfiguration = new ClientConfiguration()
+                .withProtocol(useHttp ? Protocol.HTTP : Protocol.HTTPS)
+                .withUserAgent("s3pt")
+                .withGzip(useGzip)
+                .withTcpKeepAlive(useKeepAlive);
+
+        if (useOldS3Signer) {
+            clientConfiguration.setSignerOverride(Constants.S3_SIGNER_TYPE);
+        }
+
+        AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfiguration);
+        s3Client.setS3ClientOptions(new S3ClientOptions().withPathStyleAccess(usePathStyleAccess));
+        s3Client.setEndpoint(endpointUrl);
+
+        return s3Client;
     }
 
     private AbstractOperation createOperation(Operation operation, AmazonS3 s3Client) {

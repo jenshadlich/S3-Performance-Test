@@ -61,6 +61,9 @@ public class Main {
     @Option(name = "--keepAlive", usage = "use TCP keep alive")
     private boolean useKeepAlive = false;
 
+    @Option(name = "--usePathStyleAccess", usage = "use path-style access (instead of DNS-style)")
+    private boolean usePathStyleAccess = false;
+
     @Option(name = "--keyFileName", usage = "name of file with object keys")
     private String keyFileName = null;
 
@@ -116,6 +119,7 @@ public class Main {
                 useGzip,
                 useOldS3Signer,
                 useKeepAlive,
+                usePathStyleAccess,
                 keyFileName
         ).run();
 
