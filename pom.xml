@@ -38,7 +38,7 @@
         <commons-io.version>2.4</commons-io.version>
         <aws-java-sdk.version>1.10.55</aws-java-sdk.version>
         <!-- plugin versions -->
-        <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
         <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
         <maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
