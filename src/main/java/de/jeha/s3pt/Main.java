@@ -1,7 +1,5 @@
 package de.jeha.s3pt;
 
-import com.amazonaws.auth.SignerFactory;
-import com.amazonaws.services.s3.internal.S3Signer;
 import de.jeha.s3pt.args4j.IntFromByteUnitOptionHandler;
 import org.apache.commons.lang3.time.StopWatch;
 import org.kohsuke.args4j.CmdLineException;
