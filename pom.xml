@@ -130,7 +130,7 @@
                 <configuration>
                     <finalName>s3pt</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <attach>false</attach>
+                    <attach>true</attach>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
@@ -142,6 +142,7 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
