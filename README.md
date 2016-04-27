@@ -37,16 +37,14 @@ java -jar s3pt.jar [options...]
  --operation VAL      : operation (default: UPLOAD)
  --secretKey VAL      : secret access key; also possible to set AWS_SECRET_KEY
                         in environment
+ --signerOverride VAL : override the S3 signer (e.g. 'S3Signer' or
+                        'AWSS3V4Signer')
  --size N             : file size (e.g. for UPLOAD); supported units: B, K, M
                         (default: 131072)
- --useOldS3Signer     : use old S3 Signer; currently required for Ceph /
-                        radosgw because it lacks support for SigV4 signing
-                        (default: false)
  --usePathStyleAccess : use path-style access (instead of DNS-style) (default:
                         false)
  -n (--number) N      : number of operations
  -t (--threads) N     : number of threads (default: 1)
-
 ```
 
 To print the usage information execute `java -jar target/s3pt.jar` on the command line.

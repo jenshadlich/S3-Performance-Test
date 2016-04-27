@@ -32,7 +32,7 @@ public class S3PerformanceTest implements Runnable {
     private final int size;
     private final boolean useHttp;
     private final boolean useGzip;
-    private final boolean useOldS3Signer;
+    private final String signerOverride;
     private final boolean useKeepAlive;
     private final boolean usePathStyleAccess;
     private final String keyFileName;
@@ -48,13 +48,13 @@ public class S3PerformanceTest implements Runnable {
      * @param size           size (if applicable), e.g. for UPLOAD operation
      * @param useHttp        switch to HTTP when
      * @param useGzip        enable GZIP compression
-     * @param useOldS3Signer use "old" S3Signer for endpoints that do not support v4 signing
+     * @param signerOverride override the S3 signer
      * @param useKeepAlive   use TCP keep alive
      * @param keyFileName    name of file with object keys
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
                              Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip,
-                             boolean useOldS3Signer, boolean useKeepAlive, boolean usePathStyleAccess,
+                             String signerOverride, boolean useKeepAlive, boolean usePathStyleAccess,
                              String keyFileName) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
@@ -66,7 +66,7 @@ public class S3PerformanceTest implements Runnable {
         this.size = size;
         this.useHttp = useHttp;
         this.useGzip = useGzip;
-        this.useOldS3Signer = useOldS3Signer;
+        this.signerOverride = signerOverride;
         this.useKeepAlive = useKeepAlive;
         this.usePathStyleAccess = usePathStyleAccess;
         this.keyFileName = keyFileName;
@@ -118,12 +118,15 @@ public class S3PerformanceTest implements Runnable {
                 .withGzip(useGzip)
                 .withTcpKeepAlive(useKeepAlive);
 
-        if (useOldS3Signer) {
-            clientConfiguration.setSignerOverride(Constants.S3_SIGNER_TYPE);
+        if (signerOverride != null) {
+            String signer = signerOverride.endsWith("Type")
+                    ? signerOverride
+                    : signerOverride + "Type";
+            clientConfiguration.setSignerOverride(signer);
         }
 
         AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfiguration);
-        s3Client.setS3ClientOptions(new S3ClientOptions().withPathStyleAccess(usePathStyleAccess));
+        s3Client.setS3ClientOptions(S3ClientOptions.builder().setPathStyleAccess(usePathStyleAccess).disableChunkedEncoding().build());
         s3Client.setEndpoint(endpointUrl);
 
         return s3Client;
@@ -159,7 +162,7 @@ public class S3PerformanceTest implements Runnable {
         int p95 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(95)).average().orElse(0.0);
         int p98 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(98)).average().orElse(0.0);
         int p99 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(99)).average().orElse(0.0);
-        double ops = results.stream().mapToDouble(x -> x.getStats().getN() / x.getStats().getSum() * 1000).sum();
+        double ops = results.stream().mapToDouble(x -> x.getStats().getN() / x.getStats().getSum() * 1_000).sum();
 
         LOG.info("Operation statistics:");
         LOG.info("min = {} ms", min);

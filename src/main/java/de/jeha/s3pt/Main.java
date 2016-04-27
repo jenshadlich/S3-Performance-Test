@@ -53,8 +53,8 @@ public class Main {
     @Option(name = "--gzip", usage = "use gzip")
     private boolean useGzip = false;
 
-    @Option(name = "--useOldS3Signer", usage = "use old S3 Signer; currently required for Ceph / radosgw because it lacks support for SigV4 signing")
-    private boolean useOldS3Signer = false;
+    @Option(name = "--signerOverride", usage = "override the S3 signer (e.g. 'S3Signer' or 'AWSS3V4Signer')")
+    private String signerOverride = null;
 
     @Option(name = "--keepAlive", usage = "use TCP keep alive")
     private boolean useKeepAlive = false;
@@ -115,7 +115,7 @@ public class Main {
                 size,
                 useHttp,
                 useGzip,
-                useOldS3Signer,
+                signerOverride,
                 useKeepAlive,
                 usePathStyleAccess,
                 keyFileName
