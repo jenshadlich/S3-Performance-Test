@@ -65,6 +65,9 @@ public class Main {
     @Option(name = "--keyFileName", usage = "name of file with object keys")
     private String keyFileName = null;
 
+    @Option(name = "--resultFileName", usage = "name of file with test results", hidden = true)
+    private String resultFileName = null;
+
     private final List<String> commandLineArguments = new ArrayList<>();
 
     public static void main(String... args) throws IOException {
@@ -101,10 +104,9 @@ public class Main {
         }
 
         StopWatch stopWatch = new StopWatch();
-
         stopWatch.start();
 
-        new S3PerformanceTest(
+        TestResult testResult = new S3PerformanceTest(
                 accessKey,
                 secretKey,
                 endpointUrl,
@@ -119,11 +121,15 @@ public class Main {
                 useKeepAlive,
                 usePathStyleAccess,
                 keyFileName
-        ).run();
+        ).call();
 
         stopWatch.stop();
-
         LOG.info("Total time = {} ms", stopWatch.getTime());
+
+        testResult.log();
+        if (resultFileName != null) {
+            testResult.writeToFile(resultFileName);
+        }
     }
 
     private void addArgumentsFromEnvironment(String commandLineKey, String environmentKey) {

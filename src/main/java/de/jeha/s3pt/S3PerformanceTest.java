@@ -18,7 +18,7 @@ import java.util.concurrent.*;
 /**
  * @author jenshadlich@googlemail.com
  */
-public class S3PerformanceTest implements Runnable {
+public class S3PerformanceTest implements Callable<TestResult> {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3PerformanceTest.class);
 
@@ -73,7 +73,7 @@ public class S3PerformanceTest implements Runnable {
     }
 
     @Override
-    public void run() {
+    public TestResult call() {
         AmazonS3 s3Client = buildS3Client();
 
         ExecutorService executorService = Executors.newFixedThreadPool(threads);
@@ -90,15 +90,16 @@ public class S3PerformanceTest implements Runnable {
             operations.add(createOperation(operation, s3Client));
         }
 
+        TestResult testResult = null;
         try {
             List<Future<OperationResult>> futureResults = executorService.invokeAll(operations);
 
-            List<OperationResult> results = new ArrayList<>();
+            List<OperationResult> operationResults = new ArrayList<>();
             for (Future<OperationResult> result : futureResults) {
-                results.add(result.get());
+                operationResults.add(result.get());
             }
 
-            printResults(results);
+            testResult = TestResult.compute(operationResults);
 
         } catch (InterruptedException | ExecutionException e) {
             LOG.error("An error occurred", e);
@@ -107,8 +108,15 @@ public class S3PerformanceTest implements Runnable {
         executorService.shutdown();
 
         LOG.info("Done");
+
+        return testResult;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * @return S3 client
+     */
     private AmazonS3 buildS3Client() {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 
@@ -132,6 +140,13 @@ public class S3PerformanceTest implements Runnable {
         return s3Client;
     }
 
+    /**
+     * Build the given operation.
+     *
+     * @param operation operation (enum)
+     * @param s3Client  S3 client
+     * @return operation
+     */
     private AbstractOperation createOperation(Operation operation, AmazonS3 s3Client) {
         switch (operation) {
             case CLEAR_BUCKET:
@@ -151,29 +166,6 @@ public class S3PerformanceTest implements Runnable {
             default:
                 throw new UnsupportedOperationException("Unknown operation: " + operation);
         }
-    }
-
-    private void printResults(List<OperationResult> results) {
-        int min = (int) results.stream().mapToDouble(x -> x.getStats().getMin()).average().orElse(0.0);
-        int max = (int) results.stream().mapToDouble(x -> x.getStats().getMax()).average().orElse(0.0);
-        int avg = (int) results.stream().mapToDouble(x -> x.getStats().getGeometricMean()).average().orElse(0.0);
-        int p50 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(50)).average().orElse(0.0);
-        int p75 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(75)).average().orElse(0.0);
-        int p95 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(95)).average().orElse(0.0);
-        int p98 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(98)).average().orElse(0.0);
-        int p99 = (int) results.stream().mapToDouble(x -> x.getStats().getPercentile(99)).average().orElse(0.0);
-        double ops = results.stream().mapToDouble(x -> x.getStats().getN() / x.getStats().getSum() * 1_000).sum();
-
-        LOG.info("Operation statistics:");
-        LOG.info("min = {} ms", min);
-        LOG.info("max = {} ms", max);
-        LOG.info("avg = {} ms", avg);
-        LOG.info("p50 = {} ms", p50);
-        LOG.info("p75 = {} ms", p75);
-        LOG.info("p95 = {} ms", p95);
-        LOG.info("p98 = {} ms", p98);
-        LOG.info("p99 = {} ms", p99);
-        LOG.info("throughput = {} operations/s ({} threads)", (int) ops, threads);
     }
 
 }
