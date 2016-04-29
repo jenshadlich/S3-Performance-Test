@@ -103,7 +103,7 @@ class TestResult {
      * Log the test results.
      */
     public void log() {
-        LOG.info("Test results:");
+        LOG.info("Result summary:");
         LOG.info("min = {} ms", min);
         LOG.info("max = {} ms", max);
         LOG.info("avg = {} ms", avg);
