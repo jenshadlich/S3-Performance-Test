@@ -111,7 +111,7 @@ class TestResult {
         LOG.info("p75 = {} ms", p75);
         LOG.info("p95 = {} ms", p95);
         LOG.info("p98 = {} ms", p98);
-        LOG.info("p99 = {} ms", p95);
+        LOG.info("p99 = {} ms", p99);
         LOG.info("throughput = {} operations/s", (int) ops);
     }
 
