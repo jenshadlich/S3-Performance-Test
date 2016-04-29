@@ -126,9 +126,11 @@ public class Main {
         stopWatch.stop();
         LOG.info("Total time = {} ms", stopWatch.getTime());
 
-        testResult.log();
-        if (resultFileName != null) {
-            testResult.writeToFile(resultFileName);
+        if (testResult != null) {
+            testResult.log();
+            if (resultFileName != null) {
+                testResult.writeToFile(resultFileName);
+            }
         }
     }
 
