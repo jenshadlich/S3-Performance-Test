@@ -129,7 +129,7 @@ public class Main {
         if (testResult != null) {
             testResult.log();
             if (resultFileName != null) {
-                testResult.writeToFile(resultFileName);
+                testResult.writeToFileAsJson(resultFileName);
             }
         }
     }

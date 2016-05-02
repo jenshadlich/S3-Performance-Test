@@ -2,6 +2,7 @@ package de.jeha.s3pt;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,8 +122,9 @@ class TestResult {
      * @param resultFileName name of the result file
      * @throws IOException
      */
-    public void writeToFile(String resultFileName) throws IOException {
+    public void writeToFileAsJson(String resultFileName) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
         String resultJson = mapper.writeValueAsString(this);
         FileUtils.writeStringToFile(new File(resultFileName), resultJson, StandardCharsets.UTF_8);
     }
