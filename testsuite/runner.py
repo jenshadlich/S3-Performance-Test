@@ -1,4 +1,6 @@
 import json
+import time
+import os
 import subprocess
 import matplotlib.pyplot as plt
 
@@ -25,12 +27,12 @@ tpl = 'java -jar target/s3pt.jar ' \
 #      '-t {numberOfThreads} ' \
 #      '--resultFileName {resultFileName}'
 
-tests = [
-    {'numberOfThreads': 1, 'resultFileName': 'test_1.json'},
-    {'numberOfThreads': 2, 'resultFileName': 'test_2.json'},
-    {'numberOfThreads': 4, 'resultFileName': 'test_4.json'},
-    {'numberOfThreads': 6, 'resultFileName': 'test_6.json'},
-    {'numberOfThreads': 8, 'resultFileName': 'test_8.json'},
+suite = [
+    {'numberOfThreads': 1},
+    {'numberOfThreads': 2},
+    {'numberOfThreads': 4},
+    {'numberOfThreads': 6},
+    {'numberOfThreads': 8},
 ]
 
 x = []
@@ -39,13 +41,18 @@ y_min = []
 y_p98 = []
 y_ops = []
 
-for test in tests:
-    cmd = tpl.format(numberOfItems=100,
+out_dir = 'testsuite/runs/' + str(int(time.time()))
+
+os.makedirs(out_dir)
+
+for test in suite:
+    result_file_name = '{}/test_{}.json'.format(out_dir, test['numberOfThreads'])
+    cmd = tpl.format(numberOfItems=1000,
                      numberOfThreads=test['numberOfThreads'],
-                     resultFileName=test['resultFileName'])
+                     resultFileName=result_file_name)
     subprocess.call(cmd, shell=True)
 
-    with open(test['resultFileName']) as result_file:
+    with open(result_file_name) as result_file:
         data = json.load(result_file)
         x += [test['numberOfThreads']]
         y_avg += [data['avg']]
@@ -72,4 +79,4 @@ plt.xlabel('#threads')
 
 plt.subplots_adjust(hspace=.3)
 
-plt.savefig('test_result.png', dpi=150)
+plt.savefig(out_dir + '/' + 'test_result.png', dpi=150)
