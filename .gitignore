@@ -1,6 +1,5 @@
 /testsuite/runs
 /atlassian-ide-plugin.xml
-# Created by .ignore support plugin (hsz.mobi)
 s3pt.ipr
 s3pt.iws
 target
