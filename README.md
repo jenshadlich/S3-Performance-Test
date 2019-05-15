@@ -14,7 +14,7 @@ mvn clean install
 
 ###### UPLOAD of n randomly generated files (key = UUID), each 2kB size
 ```
-java -jar target/s3pt.jar --accessKey <accessKey> --secretKey <secretKey> --bucketName <bucketName> -n <number of files to upload> -s 2048
+java -jar target/s3pt.jar --accessKey <accessKey> --secretKey <secretKey> --bucketName <bucketName> -n <number of files to upload> --size 2048
 ```
 
 ###### RANDOM_READ with 4 parallel threads, each 10.000 reads = 40.000 requests

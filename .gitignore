@@ -2,8 +2,8 @@
 /atlassian-ide-plugin.xml
 s3pt.ipr
 s3pt.iws
-target
 s3pt.iml
 release.properties
 pom.xml.releaseBackup
 .idea/
+target/
