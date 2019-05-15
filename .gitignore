@@ -6,3 +6,4 @@ target
 s3pt.iml
 release.properties
 pom.xml.releaseBackup
+.idea/
