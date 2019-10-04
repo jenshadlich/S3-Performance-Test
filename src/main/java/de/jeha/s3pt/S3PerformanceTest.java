@@ -3,10 +3,11 @@ package de.jeha.s3pt;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.S3ClientOptions;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import de.jeha.s3pt.operations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ public class S3PerformanceTest implements Callable<TestResult> {
     private final String accessKey;
     private final String secretKey;
     private final String endpointUrl;
+    private final String region;
     private final String bucketName;
     private final Operation operation;
     private final int threads;
@@ -41,6 +43,7 @@ public class S3PerformanceTest implements Callable<TestResult> {
      * @param accessKey      access key
      * @param secretKey      secret key
      * @param endpointUrl    endpoint url, e.g. 's3.amazonaws.com'
+     * @param region         explicit region, needed for other S3 implementations
      * @param bucketName     name of bucket
      * @param operation      operation
      * @param threads        number of threads
@@ -52,13 +55,14 @@ public class S3PerformanceTest implements Callable<TestResult> {
      * @param useKeepAlive   use TCP keep alive
      * @param keyFileName    name of file with object keys
      */
-    public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
+    public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String region, String bucketName,
                              Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip,
                              String signerOverride, boolean useKeepAlive, boolean usePathStyleAccess,
                              String keyFileName) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
+        this.region = region;
         this.bucketName = bucketName;
         this.operation = operation;
         this.threads = threads;
@@ -126,6 +130,7 @@ public class S3PerformanceTest implements Callable<TestResult> {
                 .withGzip(useGzip)
                 .withTcpKeepAlive(useKeepAlive);
 
+
         if (signerOverride != null) {
             String signer = signerOverride.endsWith("Type")
                     ? signerOverride
@@ -133,9 +138,24 @@ public class S3PerformanceTest implements Callable<TestResult> {
             clientConfiguration.setSignerOverride(signer);
         }
 
+        AmazonS3 s3Client = AmazonS3ClientBuilder
+                .standard()
+                .withEndpointConfiguration(
+                        new AwsClientBuilder.EndpointConfiguration(endpointUrl, region))
+                .withClientConfiguration(clientConfiguration)
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withPathStyleAccessEnabled(usePathStyleAccess) // virtual-host vs. path-style
+                .withChunkedEncodingDisabled(true) // Default=false: Enabling this option has performance implications since the checksum for the payload will have
+                // to be pre-calculated before sending the data.
+                .build();
+
+        /*
         AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfiguration);
-        s3Client.setS3ClientOptions(S3ClientOptions.builder().setPathStyleAccess(usePathStyleAccess).disableChunkedEncoding().build());
+        s3Client.setS3ClientOptions(S3ClientOptions.builder()
+                .setPathStyleAccess(usePathStyleAccess)
+                .disableChunkedEncoding().build());
         s3Client.setEndpoint(endpointUrl);
+        */
 
         return s3Client;
     }

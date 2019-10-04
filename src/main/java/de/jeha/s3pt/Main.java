@@ -41,6 +41,9 @@ public class Main {
     @Option(name = "--endpointUrl", usage = "endpoint url")
     private String endpointUrl = DEFAULT_S3_ENDPOINT;
 
+    @Option(name = "--region", usage = "explicit region, e.g. us-west-1")
+    private String region = null;
+
     @Option(name = "--bucketName", usage = "name of bucket")
     private String bucketName = null;
 
@@ -110,6 +113,7 @@ public class Main {
                 accessKey,
                 secretKey,
                 endpointUrl,
+                region,
                 bucketName,
                 Operation.valueOf(operation),
                 threads,
