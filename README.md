@@ -48,3 +48,6 @@ java -jar s3pt.jar [options...]
 ```
 
 To print the usage information execute `java -jar target/s3pt.jar` on the command line.
+
+TODO:
+- Print upload/download speed
