@@ -19,12 +19,14 @@ public class RandomReadMetadata extends AbstractOperation {
 
     private final AmazonS3 s3Client;
     private final String bucket;
+    private final String prefix;
     private final int n;
     private final String keyFileName;
 
-    public RandomReadMetadata(AmazonS3 s3Client, String bucket, int n, String keyFileName) {
+    public RandomReadMetadata(AmazonS3 s3Client, String bucket, String prefix, int n, String keyFileName) {
         this.s3Client = s3Client;
         this.bucket = bucket;
+        this.prefix = prefix;
         this.n = n;
         this.keyFileName = keyFileName;
     }
@@ -35,7 +37,7 @@ public class RandomReadMetadata extends AbstractOperation {
 
         final ObjectKeys objectKeys;
         if (keyFileName == null) {
-            objectKeys = new S3ObjectKeysDataProvider(s3Client, bucket).get();
+            objectKeys = new S3ObjectKeysDataProvider(s3Client, bucket, prefix).get();
         } else {
             objectKeys = new SingletonFileObjectKeysDataProvider(keyFileName).get();
         }
@@ -44,7 +46,7 @@ public class RandomReadMetadata extends AbstractOperation {
 
         for (int i = 0; i < n; i++) {
             final String randomKey = objectKeys.getRandom();
-            LOG.debug("Read object: {}", randomKey);
+            LOG.debug("Read object: randomKey{}", randomKey);
 
             stopWatch.reset();
             stopWatch.start();

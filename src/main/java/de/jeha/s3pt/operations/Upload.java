@@ -21,12 +21,14 @@ public class Upload extends AbstractOperation {
 
     private final AmazonS3 s3Client;
     private final String bucket;
+    private final String prefix;
     private final int n;
     private final int size;
 
-    public Upload(AmazonS3 s3Client, String bucket, int n, int size) {
+    public Upload(AmazonS3 s3Client, String bucket, String prefix, int n, int size) {
         this.s3Client = s3Client;
         this.bucket = bucket;
+        this.prefix = prefix;
         this.n = n;
         this.size = size;
     }
@@ -37,7 +39,13 @@ public class Upload extends AbstractOperation {
 
         for (int i = 0; i < n; i++) {
             final byte data[] = RandomDataGenerator.generate(size);
-            final String key = UUID.randomUUID().toString();
+            final String key;
+            if (prefix != null) {
+                key = prefix + "/" + UUID.randomUUID().toString();
+            } else {
+                key = UUID.randomUUID().toString();
+            }
+
             LOG.debug("Uploading object: {}", key);
 
             final ObjectMetadata objectMetadata = new ObjectMetadata();

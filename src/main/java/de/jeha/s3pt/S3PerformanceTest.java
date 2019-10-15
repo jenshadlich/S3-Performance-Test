@@ -28,6 +28,7 @@ public class S3PerformanceTest implements Callable<TestResult> {
     private final String endpointUrl;
     private final String region;
     private final String bucketName;
+    private final String prefix;
     private final Operation operation;
     private final int threads;
     private final int n;
@@ -45,6 +46,7 @@ public class S3PerformanceTest implements Callable<TestResult> {
      * @param endpointUrl    endpoint url, e.g. 's3.amazonaws.com'
      * @param region         explicit region, needed for other S3 implementations
      * @param bucketName     name of bucket
+     * @param prefix         optional prefix for "folder" within bucket
      * @param operation      operation
      * @param threads        number of threads
      * @param n              number of operations
@@ -56,14 +58,15 @@ public class S3PerformanceTest implements Callable<TestResult> {
      * @param keyFileName    name of file with object keys
      */
     public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String region, String bucketName,
-                             Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip,
-                             String signerOverride, boolean useKeepAlive, boolean usePathStyleAccess,
+                             String prefix, Operation operation, int threads, int n, int size, boolean useHttp,
+                             boolean useGzip, String signerOverride, boolean useKeepAlive, boolean usePathStyleAccess,
                              String keyFileName) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
         this.region = region;
         this.bucketName = bucketName;
+        this.prefix = prefix;
         this.operation = operation;
         this.threads = threads;
         this.n = n;
@@ -126,7 +129,7 @@ public class S3PerformanceTest implements Callable<TestResult> {
 
         ClientConfiguration clientConfiguration = new ClientConfiguration()
                 .withProtocol(useHttp ? Protocol.HTTP : Protocol.HTTPS)
-                .withUserAgent("s3pt")
+                .withUserAgentPrefix("s3pt")
                 .withGzip(useGzip)
                 .withTcpKeepAlive(useKeepAlive);
 
@@ -149,14 +152,6 @@ public class S3PerformanceTest implements Callable<TestResult> {
                 // to be pre-calculated before sending the data.
                 .build();
 
-        /*
-        AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfiguration);
-        s3Client.setS3ClientOptions(S3ClientOptions.builder()
-                .setPathStyleAccess(usePathStyleAccess)
-                .disableChunkedEncoding().build());
-        s3Client.setEndpoint(endpointUrl);
-        */
-
         return s3Client;
     }
 
@@ -174,15 +169,19 @@ public class S3PerformanceTest implements Callable<TestResult> {
             case CREATE_BUCKET:
                 return new CreateBucket(s3Client, bucketName);
             case CREATE_KEY_FILE:
-                return new CreateKeyFile(s3Client, bucketName, n, keyFileName);
+                return new CreateKeyFile(s3Client, bucketName, prefix, n, keyFileName);
+            case RANDOM_GET:
+                return new RandomGet(s3Client, bucketName, prefix, n, keyFileName);
             case RANDOM_READ:
-                return new RandomRead(s3Client, bucketName, n, keyFileName);
+                return new RandomRead(s3Client, bucketName, prefix, n, keyFileName);
+            case RANDOM_READ_FIRST_BYTE:
+                return new RandomReadFirstByte(s3Client, bucketName, prefix, n, keyFileName);
             case RANDOM_READ_METADATA:
-                return new RandomReadMetadata(s3Client, bucketName, n, keyFileName);
+                return new RandomReadMetadata(s3Client, bucketName, prefix, n, keyFileName);
             case UPLOAD:
-                return new Upload(s3Client, bucketName, n, size);
+                return new Upload(s3Client, bucketName, prefix, n, size);
             case UPLOAD_AND_READ:
-                return new UploadAndRead(s3Client, bucketName, n, size);
+                return new UploadAndRead(s3Client, bucketName, prefix, n, size);
             default:
                 throw new UnsupportedOperationException("Unknown operation: " + operation);
         }

@@ -2,7 +2,6 @@ package de.jeha.s3pt.operations;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import de.jeha.s3pt.OperationResult;
 import de.jeha.s3pt.operations.data.ObjectKeys;
 import de.jeha.s3pt.operations.data.S3ObjectKeysDataProvider;
@@ -11,14 +10,12 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
 /**
  * @author jenshadlich@googlemail.com
  */
-public class RandomRead extends AbstractOperation {
+public class RandomGet extends AbstractOperation {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RandomRead.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RandomGet.class);
 
     private final AmazonS3 s3Client;
     private final String bucket;
@@ -26,7 +23,7 @@ public class RandomRead extends AbstractOperation {
     private final int n;
     private final String keyFileName;
 
-    public RandomRead(AmazonS3 s3Client, String bucket, String prefix, int n, String keyFileName) {
+    public RandomGet(AmazonS3 s3Client, String bucket, String prefix, int n, String keyFileName) {
         this.s3Client = s3Client;
         this.bucket = bucket;
         this.prefix = prefix;
@@ -56,21 +53,11 @@ public class RandomRead extends AbstractOperation {
             stopWatch.reset();
             stopWatch.start();
 
-            try (S3Object object = s3Client.getObject(bucket, randomKey)) {
-                Long contentLength = s3Client.getObjectMetadata(bucket, randomKey).getContentLength();
-                int totalRead = 0;
-                try (S3ObjectInputStream inputStream = object.getObjectContent()) {
-                    int readLength;
-                    while ((readLength = inputStream.read(readBuffer)) >= 0) {
-                        totalRead += readLength;
-                    }
-                }
-                if (contentLength != null && totalRead != contentLength) {
-                    LOG.warn("Upload/read size mismatch for key {}: uploaded={} bytes, read={} bytes",
-                            randomKey, contentLength, totalRead);
-                }
-            } catch (IOException e) {
-                LOG.warn("An exception occurred while reading with key: {}", randomKey);
+            final S3Object s3Object = s3Client.getObject(bucket, randomKey);
+            try {
+                s3Object.close();
+            } catch (Exception e) {
+                LOG.warn("An exception occurred while closing with key: {}", randomKey);
             }
 
             stopWatch.stop();

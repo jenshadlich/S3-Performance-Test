@@ -47,6 +47,9 @@ public class Main {
     @Option(name = "--bucketName", usage = "name of bucket")
     private String bucketName = null;
 
+    @Option(name = "--prefix", usage = "optional prefix for \"folder\" within bucket")
+    private String prefix = null;
+
     @Option(name = "--operation", usage = "operation")
     private String operation = Operation.UPLOAD.name();
 
@@ -115,6 +118,7 @@ public class Main {
                 endpointUrl,
                 region,
                 bucketName,
+                prefix,
                 Operation.valueOf(operation),
                 threads,
                 n,

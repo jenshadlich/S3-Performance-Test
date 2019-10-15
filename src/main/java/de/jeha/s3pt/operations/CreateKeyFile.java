@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author jenshadlich@googlemail.com
@@ -21,12 +22,14 @@ public class CreateKeyFile extends AbstractOperation {
 
     private final AmazonS3 s3Client;
     private final String bucket;
+    private final String prefix;
     private final int n;
     private final String keyFileName;
 
-    public CreateKeyFile(AmazonS3 s3Client, String bucket, int n, String keyFileName) {
+    public CreateKeyFile(AmazonS3 s3Client, String bucket, String prefix, int n, String keyFileName) {
         this.s3Client = s3Client;
         this.bucket = bucket;
+        this.prefix = prefix;
         this.n = n;
         this.keyFileName = keyFileName;
     }
@@ -42,22 +45,22 @@ public class CreateKeyFile extends AbstractOperation {
         int objectsRead = 0;
 
         File keyFile = new File(keyFileName);
-        FileUtils.writeStringToFile(keyFile, "");
+        FileUtils.writeStringToFile(keyFile, "", StandardCharsets.UTF_8);
 
         boolean truncated;
         ObjectListing previousObjectListing = null;
         do {
             ObjectListing objectListing = (previousObjectListing != null)
                     ? s3Client.listNextBatchOfObjects(previousObjectListing)
-                    : s3Client.listObjects(bucket);
+                    : s3Client.listObjects(bucket, prefix);
             previousObjectListing = objectListing;
             truncated = objectListing.isTruncated();
 
             LOG.debug("Loaded {} objects", objectListing.getObjectSummaries().size());
 
             for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-                FileUtils.writeStringToFile(keyFile, objectSummary.getKey(), true);
-                FileUtils.writeStringToFile(keyFile, System.lineSeparator(), true);
+                FileUtils.writeStringToFile(keyFile, objectSummary.getKey(), StandardCharsets.UTF_8, true);
+                FileUtils.writeStringToFile(keyFile, System.lineSeparator(), StandardCharsets.UTF_8, true);
                 objectsRead++;
                 if (objectsRead >= n) {
                     break;

@@ -3,6 +3,7 @@ package de.jeha.s3pt.operations;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
 import de.jeha.s3pt.OperationResult;
 import de.jeha.s3pt.operations.data.ObjectKeys;
 import de.jeha.s3pt.operations.data.S3ObjectKeysDataProvider;
@@ -16,9 +17,9 @@ import java.io.IOException;
 /**
  * @author jenshadlich@googlemail.com
  */
-public class RandomRead extends AbstractOperation {
+public class RandomReadFirstByte extends AbstractOperation {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RandomRead.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RandomReadFirstByte.class);
 
     private final AmazonS3 s3Client;
     private final String bucket;
@@ -26,7 +27,7 @@ public class RandomRead extends AbstractOperation {
     private final int n;
     private final String keyFileName;
 
-    public RandomRead(AmazonS3 s3Client, String bucket, String prefix, int n, String keyFileName) {
+    public RandomReadFirstByte(AmazonS3 s3Client, String bucket, String prefix, int n, String keyFileName) {
         this.s3Client = s3Client;
         this.bucket = bucket;
         this.prefix = prefix;
@@ -36,9 +37,7 @@ public class RandomRead extends AbstractOperation {
 
     @Override
     public OperationResult call() {
-        LOG.info("Random read: n={}", n);
-
-        final byte[] readBuffer = new byte[4096];
+        LOG.info("Random read first byte: n={}", n);
 
         final ObjectKeys objectKeys;
         if (keyFileName == null) {
@@ -46,9 +45,9 @@ public class RandomRead extends AbstractOperation {
         } else {
             objectKeys = new SingletonFileObjectKeysDataProvider(keyFileName).get();
         }
-
         StopWatch stopWatch = new StopWatch();
 
+        final byte[] readBuffer = new byte[4096];
         for (int i = 0; i < n; i++) {
             final String randomKey = objectKeys.getRandom();
             LOG.debug("Read object: {}", randomKey);
@@ -57,17 +56,10 @@ public class RandomRead extends AbstractOperation {
             stopWatch.start();
 
             try (S3Object object = s3Client.getObject(bucket, randomKey)) {
-                Long contentLength = s3Client.getObjectMetadata(bucket, randomKey).getContentLength();
-                int totalRead = 0;
                 try (S3ObjectInputStream inputStream = object.getObjectContent()) {
-                    int readLength;
-                    while ((readLength = inputStream.read(readBuffer)) >= 0) {
-                        totalRead += readLength;
-                    }
-                }
-                if (contentLength != null && totalRead != contentLength) {
-                    LOG.warn("Upload/read size mismatch for key {}: uploaded={} bytes, read={} bytes",
-                            randomKey, contentLength, totalRead);
+                    inputStream.read(readBuffer);
+                    inputStream.abort();
+                    //IOUtils.drainInputStream(inputStream);
                 }
             } catch (IOException e) {
                 LOG.warn("An exception occurred while reading with key: {}", randomKey);

@@ -8,7 +8,9 @@ public enum Operation {
     CLEAR_BUCKET(false),
     CREATE_BUCKET(false),
     CREATE_KEY_FILE(false),
+    RANDOM_GET(true),
     RANDOM_READ(true),
+    RANDOM_READ_FIRST_BYTE(true),
     RANDOM_READ_METADATA(true),
     UPLOAD_AND_READ(true),
     UPLOAD(true);

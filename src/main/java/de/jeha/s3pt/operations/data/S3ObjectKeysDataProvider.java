@@ -16,10 +16,12 @@ public class S3ObjectKeysDataProvider implements DataProvider<ObjectKeys> {
 
     private final AmazonS3 s3Client;
     private final String bucket;
+    private final String prefix;
 
-    public S3ObjectKeysDataProvider(AmazonS3 s3Client, String bucket) {
+    public S3ObjectKeysDataProvider(AmazonS3 s3Client, String bucket, String prefix) {
         this.s3Client = s3Client;
         this.bucket = bucket;
+        this.prefix = prefix;
     }
 
     @Override
@@ -27,7 +29,7 @@ public class S3ObjectKeysDataProvider implements DataProvider<ObjectKeys> {
         int objectsRead = 0;
         ObjectKeys objectKeys = new ObjectKeys();
 
-        LOG.info("Collect object keys");
+        LOG.info("Collect object keys bucket={}, prefix={}", bucket, prefix);
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -37,7 +39,7 @@ public class S3ObjectKeysDataProvider implements DataProvider<ObjectKeys> {
         do {
             ObjectListing objectListing = (previousObjectListing != null)
                     ? s3Client.listNextBatchOfObjects(previousObjectListing)
-                    : s3Client.listObjects(bucket);
+                    : s3Client.listObjects(bucket, prefix);
             previousObjectListing = objectListing;
             truncated = objectListing.isTruncated();
 

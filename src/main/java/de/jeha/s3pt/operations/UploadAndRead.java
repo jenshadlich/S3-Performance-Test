@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import de.jeha.s3pt.OperationResult;
 import de.jeha.s3pt.operations.util.RandomDataGenerator;
 import org.apache.commons.lang3.time.StopWatch;
@@ -23,12 +24,14 @@ public class UploadAndRead extends AbstractOperation {
 
     private final AmazonS3 s3Client;
     private final String bucket;
+    private final String prefix;
     private final int n;
     private final int size;
 
-    public UploadAndRead(AmazonS3 s3Client, String bucket, int n, int size) {
+    public UploadAndRead(AmazonS3 s3Client, String bucket, String prefix, int n, int size) {
         this.s3Client = s3Client;
         this.bucket = bucket;
+        this.prefix = prefix;
         this.n = n;
         this.size = size;
     }
@@ -37,9 +40,17 @@ public class UploadAndRead extends AbstractOperation {
     public OperationResult call() {
         LOG.info("Upload: n={}, size={} byte", n, size);
 
+        final byte[] readBuffer = new byte[4096];
+
         for (int i = 0; i < n; i++) {
             final byte data[] = RandomDataGenerator.generate(size);
-            final String key = UUID.randomUUID().toString();
+            final String key;
+            if (prefix != null) {
+                key = prefix + "/" + UUID.randomUUID().toString();
+            } else {
+                key = UUID.randomUUID().toString();
+            }
+
             LOG.debug("Uploading object: {}", key);
 
             final ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -53,11 +64,20 @@ public class UploadAndRead extends AbstractOperation {
 
             s3Client.putObject(putObjectRequest);
 
-            S3Object object = s3Client.getObject(bucket, key);
-            try {
-                object.close();
+            try (S3Object object = s3Client.getObject(bucket, key)) {
+                int totalRead = 0;
+                try (S3ObjectInputStream inputStream = object.getObjectContent()) {
+                    int readLength;
+                    while ((readLength = inputStream.read(readBuffer)) >= 0) {
+                        totalRead += readLength;
+                    }
+                }
+                if (totalRead != data.length) {
+                    LOG.warn("Upload/read size mismatch for key {}: uploaded={} bytes, read={} bytes",
+                            key, data.length, totalRead);
+                }
             } catch (IOException e) {
-                LOG.warn("An exception occurred while trying to close object with key: {}", key);
+                LOG.warn("An exception occurred while reading with key: {}", key);
             }
 
             stopWatch.stop();
