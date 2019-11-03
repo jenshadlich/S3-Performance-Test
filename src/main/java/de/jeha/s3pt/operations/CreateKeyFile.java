@@ -36,7 +36,7 @@ public class CreateKeyFile extends AbstractOperation {
 
     @Override
     public OperationResult call() throws IOException {
-        LOG.info("Create key file: n={}", n);
+        LOG.info("Create key file: n={} prefix={}", n, prefix);
         LOG.info("Start collecting object keys");
 
         final File keyFile = new File(keyFileName);
