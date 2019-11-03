@@ -10,4 +10,5 @@ java -jar ../target/s3pt.jar \
   --secretKey "$APP_CONFIG_SECRET_KEY" \
   --operation DELETE_BUCKET \
   --bucketName "${bucket}" \
-  --number 1
+  --number 1 \
+  $APP_CONFIG_OPTIONS

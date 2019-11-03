@@ -12,4 +12,4 @@ java -jar ../target/s3pt.jar \
   --bucketName "${bucket}" \
   --keyFileName "${bucket}.txt" \
   --number 1000000 \
-  --keepAlive
+  $APP_CONFIG_OPTIONS

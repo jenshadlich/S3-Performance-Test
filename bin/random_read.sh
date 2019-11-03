@@ -14,4 +14,4 @@ java -jar ../target/s3pt.jar \
   --number 1000 \
   --threads 8 \
   --size 10K \
-  --keepAlive
+  $APP_CONFIG_OPTIONS

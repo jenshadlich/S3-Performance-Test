@@ -13,4 +13,4 @@ java -jar ../target/s3pt.jar \
   --keyFileName "${bucket}.txt" \
   --number 1000000 \
   --threads 3 \
-  --keepAlive 
+  $APP_CONFIG_OPTIONS
