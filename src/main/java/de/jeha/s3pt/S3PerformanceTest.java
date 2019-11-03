@@ -91,7 +91,7 @@ public class S3PerformanceTest implements Callable<TestResult> {
                 operations.add(createOperation(operation, s3Client));
             }
         } else {
-            if (threads > 1) {
+            if (threads > 1 && !operation.isMultiThreadedInside()) {
                 LOG.warn("operation {} does not support multiple threads, use single thread", operation);
             }
             operations.add(createOperation(operation, s3Client));
@@ -166,8 +166,12 @@ public class S3PerformanceTest implements Callable<TestResult> {
         switch (operation) {
             case CLEAR_BUCKET:
                 return new ClearBucket(s3Client, bucketName, n);
+            case CLEAR_BUCKET_PARALLEL:
+                return new ClearBucketParallel(s3Client, bucketName, prefix, n, keyFileName, threads);
             case CREATE_BUCKET:
                 return new CreateBucket(s3Client, bucketName);
+            case DELETE_BUCKET:
+                return new DeleteBucket(s3Client, bucketName);
             case CREATE_KEY_FILE:
                 return new CreateKeyFile(s3Client, bucketName, prefix, n, keyFileName);
             case RANDOM_GET:

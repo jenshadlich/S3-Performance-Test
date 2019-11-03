@@ -50,8 +50,8 @@ public class Main {
     @Option(name = "--prefix", usage = "optional prefix for \"folder\" within bucket")
     private String prefix = null;
 
-    @Option(name = "--operation", usage = "CLEAR_BUCKET|CREATE_BUCKET|CREATE_KEY_FILE|RANDOM_GET|RANDOM_READ|"
-            + "RANDOM_READ_FIRST_BYTE|RANDOM_READ_METADATA|UPLOAD_AND_READ|UPLOAD")
+    @Option(name = "--operation", usage = "CLEAR_BUCKET|CLEAR_BUCKET_PARALLEL|CREATE_BUCKET|DELETE_BUCKET|CREATE_KEY_FILE"
+            + "|RANDOM_GET|RANDOM_READ|RANDOM_READ_FIRST_BYTE|RANDOM_READ_METADATA|UPLOAD_AND_READ|UPLOAD")
     private String operation = Operation.UPLOAD.name();
 
     @Option(name = "--http", usage = "use http instead of https")

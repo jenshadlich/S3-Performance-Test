@@ -33,38 +33,26 @@ public class RandomReadMetadata extends AbstractOperation {
 
     @Override
     public OperationResult call() {
-        LOG.info("Random read: n={}", n);
-
+        LOG.info("Random read metadata: n={}", n);
         final ObjectKeys objectKeys;
         if (keyFileName == null) {
             objectKeys = new S3ObjectKeysDataProvider(s3Client, bucket, prefix).get();
         } else {
             objectKeys = new SingletonFileObjectKeysDataProvider(keyFileName).get();
         }
-
-        StopWatch stopWatch = new StopWatch();
-
+        final StopWatch stopWatch = new StopWatch();
         for (int i = 0; i < n; i++) {
             final String randomKey = objectKeys.getRandom();
-            LOG.debug("Read object: randomKey{}", randomKey);
-
             stopWatch.reset();
             stopWatch.start();
-
-            ObjectMetadata objectMetadata = s3Client.getObjectMetadata(bucket, randomKey);
+            final ObjectMetadata objectMetadata = s3Client.getObjectMetadata(bucket, randomKey);
             LOG.debug("Object version: {}", objectMetadata.getVersionId());
-
             stopWatch.stop();
-
-            LOG.debug("Time = {} ms", stopWatch.getTime());
             getStats().addValue(stopWatch.getTime());
-
             if (i > 0 && i % 1000 == 0) {
                 LOG.info("Progress: {} of {}", i, n);
             }
         }
-
         return new OperationResult(getStats());
     }
-
 }

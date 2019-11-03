@@ -33,44 +33,30 @@ public class RandomGet extends AbstractOperation {
 
     @Override
     public OperationResult call() {
-        LOG.info("Random read: n={}", n);
-
-        final byte[] readBuffer = new byte[4096];
-
+        LOG.info("Random get: n={}", n);
         final ObjectKeys objectKeys;
         if (keyFileName == null) {
             objectKeys = new S3ObjectKeysDataProvider(s3Client, bucket, prefix).get();
         } else {
             objectKeys = new SingletonFileObjectKeysDataProvider(keyFileName).get();
         }
-
-        StopWatch stopWatch = new StopWatch();
-
+        final StopWatch stopWatch = new StopWatch();
         for (int i = 0; i < n; i++) {
             final String randomKey = objectKeys.getRandom();
-            LOG.debug("Read object: {}", randomKey);
-
             stopWatch.reset();
             stopWatch.start();
-
             final S3Object s3Object = s3Client.getObject(bucket, randomKey);
             try {
                 s3Object.close();
             } catch (Exception e) {
                 LOG.warn("An exception occurred while closing with key: {}", randomKey);
             }
-
             stopWatch.stop();
-
-            LOG.debug("Time = {} ms", stopWatch.getTime());
             getStats().addValue(stopWatch.getTime());
-
             if (i > 0 && i % 1000 == 0) {
                 LOG.info("Progress: {} of {}", i, n);
             }
         }
-
         return new OperationResult(getStats());
     }
-
 }

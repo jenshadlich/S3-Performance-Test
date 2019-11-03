@@ -37,9 +37,7 @@ public class RandomRead extends AbstractOperation {
     @Override
     public OperationResult call() {
         LOG.info("Random read: n={}", n);
-
         final byte[] readBuffer = new byte[4096];
-
         final ObjectKeys objectKeys;
         if (keyFileName == null) {
             objectKeys = new S3ObjectKeysDataProvider(s3Client, bucket, prefix).get();
@@ -47,17 +45,14 @@ public class RandomRead extends AbstractOperation {
             objectKeys = new SingletonFileObjectKeysDataProvider(keyFileName).get();
         }
 
-        StopWatch stopWatch = new StopWatch();
+        final StopWatch stopWatch = new StopWatch();
 
         for (int i = 0; i < n; i++) {
             final String randomKey = objectKeys.getRandom();
-            LOG.debug("Read object: {}", randomKey);
-
             stopWatch.reset();
             stopWatch.start();
-
             try (S3Object object = s3Client.getObject(bucket, randomKey)) {
-                Long contentLength = s3Client.getObjectMetadata(bucket, randomKey).getContentLength();
+                long contentLength = s3Client.getObjectMetadata(bucket, randomKey).getContentLength();
                 int totalRead = 0;
                 try (S3ObjectInputStream inputStream = object.getObjectContent()) {
                     int readLength;
@@ -65,25 +60,19 @@ public class RandomRead extends AbstractOperation {
                         totalRead += readLength;
                     }
                 }
-                if (contentLength != null && totalRead != contentLength) {
+                if (totalRead != contentLength) {
                     LOG.warn("Upload/read size mismatch for key {}: uploaded={} bytes, read={} bytes",
                             randomKey, contentLength, totalRead);
                 }
             } catch (IOException e) {
                 LOG.warn("An exception occurred while reading with key: {}", randomKey);
             }
-
             stopWatch.stop();
-
-            LOG.debug("Time = {} ms", stopWatch.getTime());
             getStats().addValue(stopWatch.getTime());
-
             if (i > 0 && i % 1000 == 0) {
                 LOG.info("Progress: {} of {}", i, n);
             }
         }
-
         return new OperationResult(getStats());
     }
-
 }

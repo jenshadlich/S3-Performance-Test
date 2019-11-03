@@ -39,25 +39,25 @@ public class CreateKeyFile extends AbstractOperation {
         LOG.info("Create key file: n={}", n);
         LOG.info("Start collecting object keys");
 
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
-        int objectsRead = 0;
-
-        File keyFile = new File(keyFileName);
+        final File keyFile = new File(keyFileName);
         FileUtils.writeStringToFile(keyFile, "", StandardCharsets.UTF_8);
 
+        int objectsRead = 0;
         boolean truncated;
         ObjectListing previousObjectListing = null;
+
+        final StopWatch totalStopWatch = new StopWatch();
+        totalStopWatch.start();
+
         do {
+            final StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
             ObjectListing objectListing = (previousObjectListing != null)
                     ? s3Client.listNextBatchOfObjects(previousObjectListing)
                     : s3Client.listObjects(bucket, prefix);
             previousObjectListing = objectListing;
             truncated = objectListing.isTruncated();
-
             LOG.debug("Loaded {} objects", objectListing.getObjectSummaries().size());
-
             for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
                 FileUtils.writeStringToFile(keyFile, objectSummary.getKey(), StandardCharsets.UTF_8, true);
                 FileUtils.writeStringToFile(keyFile, System.lineSeparator(), StandardCharsets.UTF_8, true);
@@ -66,17 +66,12 @@ public class CreateKeyFile extends AbstractOperation {
                     break;
                 }
             }
-
+            stopWatch.stop();
+            getStats().addValue(stopWatch.getTime());
             LOG.info("Progress: {} of {}", objectsRead, n);
-
         } while (truncated && objectsRead < n);
-
-        stopWatch.stop();
-        getStats().addValue(stopWatch.getTime());
-
-        LOG.info("Time = {} ms", stopWatch.getTime());
-
+        totalStopWatch.stop();
+        LOG.info("Total time = {} ms", totalStopWatch.getTime());
         return new OperationResult(getStats());
     }
-
 }

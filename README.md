@@ -34,7 +34,7 @@ java -jar s3pt.jar [options...]
  --http               : use http instead of https (default: false)
  --keepAlive          : use TCP keep alive (default: false)
  --keyFileName VAL    : name of file with object keys
- --operation VAL      : CLEAR_BUCKET|CREATE_BUCKET|CREATE_KEY_FILE|RANDOM_GET|RANDOM_READ
+ --operation VAL      : CLEAR_BUCKET|CREATE_BUCKET|CREATE_BUCKET_PARALLEL|DELETE_BUCKET|CREATE_KEY_FILE|RANDOM_GET|RANDOM_READ
                         |RANDOM_READ_FIRST_BYTE|RANDOM_READ_METADATA|UPLOAD_AND_READ|UPLOAD (default: UPLOAD)
  --prefix VAL         : optional prefix for "folder" within bucket
  --region VAL         : explicit region, e.g. us-west-1

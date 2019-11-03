@@ -26,40 +26,32 @@ public class ClearBucket extends AbstractOperation {
     }
 
     @Override
-    public OperationResult call() throws Exception {
+    public OperationResult call() {
         LOG.info("Clear bucket: bucket={}, n={}", bucket, n);
 
         int deleted = 0;
         boolean truncated;
         do {
-            ObjectListing objectListing = s3Client.listObjects(bucket);
+            final ObjectListing objectListing = s3Client.listObjects(bucket);
             truncated = objectListing.isTruncated();
-
             for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
                 LOG.debug("Delete object: {}, #deleted {}", objectSummary.getKey(), deleted);
-
-                StopWatch stopWatch = new StopWatch();
+                final StopWatch stopWatch = new StopWatch();
                 stopWatch.start();
-
                 s3Client.deleteObject(bucket, objectSummary.getKey());
-
                 stopWatch.stop();
-
-                LOG.debug("Time = {} ms", stopWatch.getTime());
                 getStats().addValue(stopWatch.getTime());
 
                 deleted++;
                 if (deleted >= n) {
                     break;
                 }
-                if (deleted % 1000 == 0) {
+                if (deleted > 0 && deleted % 1000 == 0) {
                     LOG.info("Objects deleted so far: {}", deleted);
                 }
             }
         } while (truncated && deleted < n);
-
         LOG.info("Object deleted: {}", deleted);
-
         return new OperationResult(getStats());
     }
 }

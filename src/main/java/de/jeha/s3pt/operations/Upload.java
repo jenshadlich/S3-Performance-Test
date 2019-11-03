@@ -38,7 +38,7 @@ public class Upload extends AbstractOperation {
         LOG.info("Upload: n={}, size={} byte", n, size);
 
         for (int i = 0; i < n; i++) {
-            final byte data[] = RandomDataGenerator.generate(size);
+            final byte[] data = RandomDataGenerator.generate(size);
             final String key;
             if (prefix != null) {
                 key = prefix + "/" + UUID.randomUUID().toString();
@@ -46,22 +46,17 @@ public class Upload extends AbstractOperation {
                 key = UUID.randomUUID().toString();
             }
 
-            LOG.debug("Uploading object: {}", key);
-
             final ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(data.length);
 
-            PutObjectRequest putObjectRequest =
+            final PutObjectRequest putObjectRequest =
                     new PutObjectRequest(bucket, key, new ByteArrayInputStream(data), objectMetadata);
 
-            StopWatch stopWatch = new StopWatch();
+            final StopWatch stopWatch = new StopWatch();
             stopWatch.start();
-
             s3Client.putObject(putObjectRequest);
-
             stopWatch.stop();
 
-            LOG.debug("Time = {} ms", stopWatch.getTime());
             getStats().addValue(stopWatch.getTime());
 
             if (i > 0 && i % 1000 == 0) {
