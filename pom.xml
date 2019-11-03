@@ -5,7 +5,7 @@
     <artifactId>s3pt</artifactId>
     <name>S3 Performance Test</name>
     <packaging>jar</packaging>
-    <version>0.7-SNAPSHOT</version>
+    <version>0.8</version>
     <description>A tool to test the performance of Amazon S3 or S3-compatible object storage systems like Ceph with radosgw
     </description>
 
@@ -14,12 +14,16 @@
             <name>Jens Hadlich</name>
             <email>jenshadlich@googlemail.com</email>
         </developer>
+        <developer>
+            <name>Hans Schuell</name>
+            <email>hans.schuell(at)giraone.com</email>
+        </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/jenshadlich/S3-Performance-Test.git</connection>
-        <developerConnection>scm:git:https://github.com/jenshadlich/S3-Performance-Test.git</developerConnection>
-        <url>https://github.com/jenshadlich/S3-Performance-Test.git</url>
+        <connection>scm:git:git://github.com/giraone/S3-Performance-Test.git</connection>
+        <developerConnection>scm:git:https://github.com/giraone/S3-Performance-Test.git</developerConnection>
+        <url>https://github.com/giraone/S3-Performance-Test.git</url>
         <tag>HEAD</tag>
     </scm>
 
