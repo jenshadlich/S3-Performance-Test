@@ -1,7 +1,7 @@
 package de.jeha.s3pt.operations;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
 import de.jeha.s3pt.OperationResult;
 import de.jeha.s3pt.operations.data.ObjectKeys;
 import de.jeha.s3pt.operations.data.S3ObjectKeysDataProvider;
@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 /**
  * @author jenshadlich@googlemail.com
  */
-public class RandomReadMetadata extends AbstractOperation {
+public class RandomGet extends AbstractOperation {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RandomReadMetadata.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RandomGet.class);
 
     private final AmazonS3 s3Client;
     private final String bucket;
@@ -23,7 +23,7 @@ public class RandomReadMetadata extends AbstractOperation {
     private final int n;
     private final String keyFileName;
 
-    public RandomReadMetadata(AmazonS3 s3Client, String bucket, String prefix, int n, String keyFileName) {
+    public RandomGet(AmazonS3 s3Client, String bucket, String prefix, int n, String keyFileName) {
         this.s3Client = s3Client;
         this.bucket = bucket;
         this.prefix = prefix;
@@ -33,7 +33,7 @@ public class RandomReadMetadata extends AbstractOperation {
 
     @Override
     public OperationResult call() {
-        LOG.info("Random read metadata: n={}", n);
+        LOG.info("Random get: n={}", n);
         final ObjectKeys objectKeys;
         if (keyFileName == null) {
             objectKeys = new S3ObjectKeysDataProvider(s3Client, bucket, prefix).get();
@@ -45,8 +45,12 @@ public class RandomReadMetadata extends AbstractOperation {
             final String randomKey = objectKeys.getRandom();
             stopWatch.reset();
             stopWatch.start();
-            final ObjectMetadata objectMetadata = s3Client.getObjectMetadata(bucket, randomKey);
-            LOG.debug("Object version: {}", objectMetadata.getVersionId());
+            final S3Object s3Object = s3Client.getObject(bucket, randomKey);
+            try {
+                s3Object.close();
+            } catch (Exception e) {
+                LOG.warn("An exception occurred while closing with key: {}", randomKey);
+            }
             stopWatch.stop();
             getStats().addValue(stopWatch.getTime());
             if (i > 0 && i % 1000 == 0) {

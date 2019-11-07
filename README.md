@@ -14,18 +14,18 @@ mvn clean install
 
 ###### UPLOAD of n randomly generated files (key = UUID), each 2kB size
 ```
-java -jar target/s3pt.jar --accessKey <accessKey> --secretKey <secretKey> --bucketName <bucketName> -n <number of files to upload> --size 2048
+java -jar target/s3pt-jar-with-dependencies.jar --accessKey <accessKey> --secretKey <secretKey> --bucketName <bucketName> -n <number of files to upload> --size 2048
 ```
 
 ###### RANDOM_READ with 4 parallel threads, each 10.000 reads = 40.000 requests
 ```
-java -jar target/s3pt.jar --accessKey <accessKey> --secretKey <secretKey> --bucketName <bucketName> --operation=RANDOM_READ -n 10000 -t 4
+java -jar target/s3pt-jar-with-dependencies.jar --accessKey <accessKey> --secretKey <secretKey> --bucketName <bucketName> --operation=RANDOM_READ -n 10000 -t 4
 ```
 
 ###### General usage:
 
 ```
-java -jar s3pt.jar [options...]
+java -jar s3pt-jar-with-dependencies.jar [options...]
  --accessKey VAL      : access key ID; also possible to set AWS_ACCESS_KEY int
                         environment
  --bucketName VAL     : name of bucket
@@ -34,7 +34,10 @@ java -jar s3pt.jar [options...]
  --http               : use http instead of https (default: false)
  --keepAlive          : use TCP keep alive (default: false)
  --keyFileName VAL    : name of file with object keys
- --operation VAL      : operation (default: UPLOAD)
+ --operation VAL      : CLEAR_BUCKET|CREATE_BUCKET|CREATE_BUCKET_PARALLEL|DELETE_BUCKET|CREATE_KEY_FILE|RANDOM_GET|RANDOM_READ
+                        |RANDOM_READ_FIRST_BYTE|RANDOM_READ_METADATA|UPLOAD_AND_READ|UPLOAD (default: UPLOAD)
+ --prefix VAL         : optional prefix for "folder" within bucket
+ --region VAL         : explicit region, e.g. us-west-1
  --secretKey VAL      : secret access key; also possible to set AWS_SECRET_KEY
                         in environment
  --signerOverride VAL : override the S3 signer (e.g. 'S3Signer' or
@@ -47,4 +50,4 @@ java -jar s3pt.jar [options...]
  -t (--threads) N     : number of threads (default: 1)
 ```
 
-To print the usage information execute `java -jar target/s3pt.jar` on the command line.
+To print the usage information execute `java -jar target/s3pt-jar-with-dependencies.jar` on the command line.

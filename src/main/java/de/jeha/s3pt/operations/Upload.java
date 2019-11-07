@@ -21,12 +21,14 @@ public class Upload extends AbstractOperation {
 
     private final AmazonS3 s3Client;
     private final String bucket;
+    private final String prefix;
     private final int n;
     private final int size;
 
-    public Upload(AmazonS3 s3Client, String bucket, int n, int size) {
+    public Upload(AmazonS3 s3Client, String bucket, String prefix, int n, int size) {
         this.s3Client = s3Client;
         this.bucket = bucket;
+        this.prefix = prefix;
         this.n = n;
         this.size = size;
     }
@@ -36,24 +38,25 @@ public class Upload extends AbstractOperation {
         LOG.info("Upload: n={}, size={} byte", n, size);
 
         for (int i = 0; i < n; i++) {
-            final byte data[] = RandomDataGenerator.generate(size);
-            final String key = UUID.randomUUID().toString();
-            LOG.debug("Uploading object: {}", key);
+            final byte[] data = RandomDataGenerator.generate(size);
+            final String key;
+            if (prefix != null) {
+                key = prefix + "/" + UUID.randomUUID().toString();
+            } else {
+                key = UUID.randomUUID().toString();
+            }
 
             final ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(data.length);
 
-            PutObjectRequest putObjectRequest =
+            final PutObjectRequest putObjectRequest =
                     new PutObjectRequest(bucket, key, new ByteArrayInputStream(data), objectMetadata);
 
-            StopWatch stopWatch = new StopWatch();
+            final StopWatch stopWatch = new StopWatch();
             stopWatch.start();
-
             s3Client.putObject(putObjectRequest);
-
             stopWatch.stop();
 
-            LOG.debug("Time = {} ms", stopWatch.getTime());
             getStats().addValue(stopWatch.getTime());
 
             if (i > 0 && i % 1000 == 0) {

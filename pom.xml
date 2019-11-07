@@ -5,7 +5,7 @@
     <artifactId>s3pt</artifactId>
     <name>S3 Performance Test</name>
     <packaging>jar</packaging>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.8.1</version>
     <description>A tool to test the performance of Amazon S3 or S3-compatible object storage systems like Ceph with radosgw
     </description>
 
@@ -14,12 +14,16 @@
             <name>Jens Hadlich</name>
             <email>jenshadlich@googlemail.com</email>
         </developer>
+        <developer>
+            <name>Hans Schuell</name>
+            <email>hans.schuell(at)giraone.com</email>
+        </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/jenshadlich/S3-Performance-Test.git</connection>
-        <developerConnection>scm:git:https://github.com/jenshadlich/S3-Performance-Test.git</developerConnection>
-        <url>https://github.com/jenshadlich/S3-Performance-Test.git</url>
+        <connection>scm:git:git://github.com/giraone/S3-Performance-Test.git</connection>
+        <developerConnection>scm:git:https://github.com/giraone/S3-Performance-Test.git</developerConnection>
+        <url>https://github.com/giraone/S3-Performance-Test.git</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -36,7 +40,8 @@
         <commons-lang3.version>3.4</commons-lang3.version>
         <commons-math3.version>3.6</commons-math3.version>
         <commons-io.version>2.5</commons-io.version>
-        <aws-java-sdk.version>1.11.31</aws-java-sdk.version>
+        <aws-java-sdk.version>1.11.642</aws-java-sdk.version>
+        <jaxb-core.version>2.3.0.1</jaxb-core.version>
         <!-- plugin versions -->
         <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
@@ -65,6 +70,11 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>${aws-java-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>${jaxb-core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -129,7 +139,6 @@
                 <version>${maven-assembly-plugin.version}</version>
                 <configuration>
                     <finalName>s3pt</finalName>
-                    <appendAssemblyId>false</appendAssemblyId>
                     <attach>true</attach>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>

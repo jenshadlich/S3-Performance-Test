@@ -41,10 +41,17 @@ public class Main {
     @Option(name = "--endpointUrl", usage = "endpoint url")
     private String endpointUrl = DEFAULT_S3_ENDPOINT;
 
+    @Option(name = "--region", usage = "explicit region, e.g. us-west-1")
+    private String region = null;
+
     @Option(name = "--bucketName", usage = "name of bucket")
     private String bucketName = null;
 
-    @Option(name = "--operation", usage = "operation")
+    @Option(name = "--prefix", usage = "optional prefix for \"folder\" within bucket")
+    private String prefix = null;
+
+    @Option(name = "--operation", usage = "CLEAR_BUCKET|CLEAR_BUCKET_PARALLEL|CREATE_BUCKET|DELETE_BUCKET|CREATE_KEY_FILE"
+            + "|RANDOM_GET|RANDOM_READ|RANDOM_READ_FIRST_BYTE|RANDOM_READ_METADATA|UPLOAD_AND_READ|UPLOAD")
     private String operation = Operation.UPLOAD.name();
 
     @Option(name = "--http", usage = "use http instead of https")
@@ -110,7 +117,9 @@ public class Main {
                 accessKey,
                 secretKey,
                 endpointUrl,
+                region,
                 bucketName,
+                prefix,
                 Operation.valueOf(operation),
                 threads,
                 n,

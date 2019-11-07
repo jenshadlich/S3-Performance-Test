@@ -3,10 +3,11 @@ package de.jeha.s3pt;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.S3ClientOptions;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import de.jeha.s3pt.operations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,9 @@ public class S3PerformanceTest implements Callable<TestResult> {
     private final String accessKey;
     private final String secretKey;
     private final String endpointUrl;
+    private final String region;
     private final String bucketName;
+    private final String prefix;
     private final Operation operation;
     private final int threads;
     private final int n;
@@ -41,7 +44,9 @@ public class S3PerformanceTest implements Callable<TestResult> {
      * @param accessKey      access key
      * @param secretKey      secret key
      * @param endpointUrl    endpoint url, e.g. 's3.amazonaws.com'
+     * @param region         explicit region, needed for other S3 implementations
      * @param bucketName     name of bucket
+     * @param prefix         optional prefix for "folder" within bucket
      * @param operation      operation
      * @param threads        number of threads
      * @param n              number of operations
@@ -52,14 +57,16 @@ public class S3PerformanceTest implements Callable<TestResult> {
      * @param useKeepAlive   use TCP keep alive
      * @param keyFileName    name of file with object keys
      */
-    public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String bucketName,
-                             Operation operation, int threads, int n, int size, boolean useHttp, boolean useGzip,
-                             String signerOverride, boolean useKeepAlive, boolean usePathStyleAccess,
+    public S3PerformanceTest(String accessKey, String secretKey, String endpointUrl, String region, String bucketName,
+                             String prefix, Operation operation, int threads, int n, int size, boolean useHttp,
+                             boolean useGzip, String signerOverride, boolean useKeepAlive, boolean usePathStyleAccess,
                              String keyFileName) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpointUrl = endpointUrl;
+        this.region = region;
         this.bucketName = bucketName;
+        this.prefix = prefix;
         this.operation = operation;
         this.threads = threads;
         this.n = n;
@@ -84,7 +91,7 @@ public class S3PerformanceTest implements Callable<TestResult> {
                 operations.add(createOperation(operation, s3Client));
             }
         } else {
-            if (threads > 1) {
+            if (threads > 1 && !operation.isMultiThreadedInside()) {
                 LOG.warn("operation {} does not support multiple threads, use single thread", operation);
             }
             operations.add(createOperation(operation, s3Client));
@@ -122,9 +129,10 @@ public class S3PerformanceTest implements Callable<TestResult> {
 
         ClientConfiguration clientConfiguration = new ClientConfiguration()
                 .withProtocol(useHttp ? Protocol.HTTP : Protocol.HTTPS)
-                .withUserAgent("s3pt")
+                .withUserAgentPrefix("s3pt")
                 .withGzip(useGzip)
                 .withTcpKeepAlive(useKeepAlive);
+
 
         if (signerOverride != null) {
             String signer = signerOverride.endsWith("Type")
@@ -133,9 +141,16 @@ public class S3PerformanceTest implements Callable<TestResult> {
             clientConfiguration.setSignerOverride(signer);
         }
 
-        AmazonS3 s3Client = new AmazonS3Client(credentials, clientConfiguration);
-        s3Client.setS3ClientOptions(S3ClientOptions.builder().setPathStyleAccess(usePathStyleAccess).disableChunkedEncoding().build());
-        s3Client.setEndpoint(endpointUrl);
+        AmazonS3 s3Client = AmazonS3ClientBuilder
+                .standard()
+                .withEndpointConfiguration(
+                        new AwsClientBuilder.EndpointConfiguration(endpointUrl, region))
+                .withClientConfiguration(clientConfiguration)
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withPathStyleAccessEnabled(usePathStyleAccess) // virtual-host vs. path-style
+                .withChunkedEncodingDisabled(true) // Default=false: Enabling this option has performance implications since the checksum for the payload will have
+                // to be pre-calculated before sending the data.
+                .build();
 
         return s3Client;
     }
@@ -151,18 +166,26 @@ public class S3PerformanceTest implements Callable<TestResult> {
         switch (operation) {
             case CLEAR_BUCKET:
                 return new ClearBucket(s3Client, bucketName, n);
+            case CLEAR_BUCKET_PARALLEL:
+                return new ClearBucketParallel(s3Client, bucketName, prefix, n, keyFileName, threads);
             case CREATE_BUCKET:
                 return new CreateBucket(s3Client, bucketName);
+            case DELETE_BUCKET:
+                return new DeleteBucket(s3Client, bucketName);
             case CREATE_KEY_FILE:
-                return new CreateKeyFile(s3Client, bucketName, n, keyFileName);
+                return new CreateKeyFile(s3Client, bucketName, prefix, n, keyFileName);
+            case RANDOM_GET:
+                return new RandomGet(s3Client, bucketName, prefix, n, keyFileName);
             case RANDOM_READ:
-                return new RandomRead(s3Client, bucketName, n, keyFileName);
+                return new RandomRead(s3Client, bucketName, prefix, n, keyFileName);
+            case RANDOM_READ_FIRST_BYTE:
+                return new RandomReadFirstByte(s3Client, bucketName, prefix, n, keyFileName);
             case RANDOM_READ_METADATA:
-                return new RandomReadMetadata(s3Client, bucketName, n, keyFileName);
+                return new RandomReadMetadata(s3Client, bucketName, prefix, n, keyFileName);
             case UPLOAD:
-                return new Upload(s3Client, bucketName, n, size);
+                return new Upload(s3Client, bucketName, prefix, n, size);
             case UPLOAD_AND_READ:
-                return new UploadAndRead(s3Client, bucketName, n, size);
+                return new UploadAndRead(s3Client, bucketName, prefix, n, size);
             default:
                 throw new UnsupportedOperationException("Unknown operation: " + operation);
         }
