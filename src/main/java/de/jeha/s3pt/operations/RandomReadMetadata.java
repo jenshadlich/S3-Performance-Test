@@ -10,6 +10,8 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.jeha.s3pt.operations.util.ProgressLogger.logProgress;
+
 /**
  * @author jenshadlich@googlemail.com
  */
@@ -57,9 +59,7 @@ public class RandomReadMetadata extends AbstractOperation {
             LOG.debug("Time = {} ms", stopWatch.getTime());
             getStats().addValue(stopWatch.getTime());
 
-            if (i > 0 && i % 1000 == 0) {
-                LOG.info("Progress: {} of {}", i, n);
-            }
+            logProgress(LOG, i, n);
         }
 
         return new OperationResult(getStats());

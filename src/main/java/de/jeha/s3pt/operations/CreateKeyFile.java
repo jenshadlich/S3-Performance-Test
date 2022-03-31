@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 
+import static de.jeha.s3pt.operations.util.ProgressLogger.logProgress;
+
 /**
  * @author jenshadlich@googlemail.com
  */
@@ -64,7 +66,7 @@ public class CreateKeyFile extends AbstractOperation {
                 }
             }
 
-            LOG.info("Progress: {} of {}", objectsRead, n);
+            logProgress(LOG, objectsRead, n);
 
         } while (truncated && objectsRead < n);
 
