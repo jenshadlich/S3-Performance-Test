@@ -1,11 +1,11 @@
 # S3 Performance Test Tool
 
-![build](https://api.travis-ci.org/jenshadlich/S3-Performance-Test.svg)
+![build](https://github.com/jenshadlich/S3-Performance-Test/actions/workflows/maven.yml/badge.svg)
 
 Performance test tool for Amazon S3 or S3-compatible object storage systems like Ceph with radosgw.
 
 ##### Build:
-(requires Java 8 or higher)
+(requires Java 11 or higher)
 ```
 mvn clean install
 ```
