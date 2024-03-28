@@ -8,6 +8,8 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.jeha.s3pt.operations.util.ProgressLogger.logProgress;
+
 /**
  * @author jenshadlich@googlemail.com
  */
@@ -52,9 +54,7 @@ public class ClearBucket extends AbstractOperation {
                 if (deleted >= n) {
                     break;
                 }
-                if (deleted % 1000 == 0) {
-                    LOG.info("Objects deleted so far: {}", deleted);
-                }
+                logProgress(LOG, deleted, n);
             }
         } while (truncated && deleted < n);
 

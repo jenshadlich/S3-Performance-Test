@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.util.UUID;
 
+import static de.jeha.s3pt.operations.util.ProgressLogger.logProgress;
+
 /**
  * @author jenshadlich@googlemail.com
  */
@@ -34,7 +36,6 @@ public class Upload extends AbstractOperation {
     @Override
     public OperationResult call() {
         LOG.info("Upload: n={}, size={} byte", n, size);
-
         for (int i = 0; i < n; i++) {
             final byte data[] = RandomDataGenerator.generate(size);
             final String key = UUID.randomUUID().toString();
@@ -56,9 +57,7 @@ public class Upload extends AbstractOperation {
             LOG.debug("Time = {} ms", stopWatch.getTime());
             getStats().addValue(stopWatch.getTime());
 
-            if (i > 0 && i % 1000 == 0) {
-                LOG.info("Progress: {} of {}", i, n);
-            }
+            logProgress(LOG, i, n);
         }
 
         return new OperationResult(getStats());
